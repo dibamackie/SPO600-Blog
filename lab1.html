@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 1: 6502 Bitmap Display</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important; /* Green navbar */
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .nav-link.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    pre {
+      font-family: "Courier New", Courier, monospace;
+    }
+    .image-container img {
+      max-width: 100%; /* Make the image responsive */
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body data-lab="lab1">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+            <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="lab1.html">Lab 1</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Lab 1: 6502 Emulator Bitmap Display and Performance Optimization</h1>
+
+    <h2>Introduction</h2>
+    <p>
+      This blog post details my experiments and learnings from Lab 1 of the 6502 programming course. The lab focuses on filling a bitmapped display with colors using assembly language and optimizing the program's performance on the 6502 emulator. I also explored modifying the display to achieve various effects, calculated execution time, and analyzed mistakes made during this process to understand the intricacies of performance analysis.
+    </p>
+
+    <h2>Code Overview: Filling the Screen with Yellow</h2>
+    <pre class="bg-light p-3">
+<code>
+  lda #$00        ; Set a pointer in memory location $40 to point to $0200
+  sta $40         ; Low byte ($00) goes in address $40
+  lda #$02
+  sta $41         ; High byte ($02) goes into address $41
+  lda #$07        ; Color number (yellow)
+  ldy #$00        ; Set index to 0
+loop:
+  sta ($40),y     ; Set pixel color at the address (pointer) + Y
+  iny             ; Increment index
+  bne loop        ; Continue until done with the page (256 pixels)
+  inc $41         ; Increment the page
+  ldx $41         ; Get the current page number
+  cpx #$06        ; Compare with 6
+  bne loop        ; Continue until done with all pages
+</code>
+    </pre>
+
+    <h2>How the Code Works</h2>
+    <ul>
+      <li><strong>Setup:</strong> A pointer is stored in memory locations $40 and $41, pointing to the start of the bitmap memory ($0200).</li>
+      <li><strong>Color Assignment:</strong> The <code>lda #$07</code> instruction sets the yellow color.</li>
+      <li><strong>Inner Loop:</strong> The loop iterates over all 256 bytes (pixels) in a page, storing the color value.</li>
+      <li><strong>Page Handling:</strong> The high byte in $41 is incremented to move to the next page after processing one page.</li>
+      <li><strong>Outer Loop:</strong> The outer loop processes 6 pages (each with 256 pixels) to fill the entire bitmap display.</li>
+    </ul>
+
+    <h2>Performance Analysis</h2>
+    <p>
+      To calculate how long it takes to execute the code:
+    </p>
+    <ul>
+      <li><strong>Pixels per page:</strong> 256 (0–255, as the Y register is 8-bit).</li>
+      <li><strong>Pages processed:</strong> 6.</li>
+      <li><strong>Total pixels:</strong> 1536.</li>
+    </ul>
+    <h3>Instruction Counts</h3>
+    <p>
+      The table below shows the instruction counts and cycles:
+    </p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Instruction</th>
+          <th>Cycles</th>
+          <th>Count</th>
+          <th>Total Cycles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>lda #$00</td><td>2</td><td>1</td><td>2</td></tr>
+        <tr><td>sta $40</td><td>3</td><td>1</td><td>3</td></tr>
+        <tr><td>lda #$02</td><td>2</td><td>1</td><td>2</td></tr>
+        <tr><td>sta $41</td><td>3</td><td>1</td><td>3</td></tr>
+        <tr><td>lda #$07</td><td>2</td><td>1</td><td>2</td></tr>
+        <tr><td>ldy #$00</td><td>2</td><td>1</td><td>2</td></tr>
+        <tr><td>sta ($40),y</td><td>6</td><td>1536</td><td>9216</td></tr>
+        <tr><td>iny</td><td>2</td><td>1536</td><td>3072</td></tr>
+        <tr><td>bne loop</td><td>3</td><td>1530</td><td>4590</td></tr>
+        <tr><td>inc $41</td><td>5</td><td>6</td><td>30</td></tr>
+        <tr><td>ldx $41</td><td>2</td><td>6</td><td>12</td></tr>
+        <tr><td>cpx #$06</td><td>2</td><td>6</td><td>12</td></tr>
+        <tr><td>bne loop</td><td>3</td><td>5</td><td>15</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Total Cycles:</strong> 16,961.</p>
+    <p><strong>Clock Time:</strong> 1 MHz </p>
+    <p><strong>Cycle Time:</strong> 1μs</p>
+    <p><strong>Execution Time:</strong> 16.961 ms (at 1 MHz clock speed).</p>
+    
+    <h2>Experiments</h2>
+<button class="btn btn-success mb-3" id="toggleExperiments">Show Experiments</button>
+
+<div id="experimentsSection" style="display: none;">
+  <p>Here are the experiments from modifications to the original code:</p>
+
+  <h3>1. Adding <code>tya</code> Before <code>sta ($40),y</code></h3>
+  <pre class="bg-light p-3">
+<code>
+tya              ; Transfer Y register to the Accumulator
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Creates a gradient where each pixel color corresponds to its Y index. The screen displays <strong>256 colors</strong>.</p>
+
+  <h3>2. Adding <code>lsr</code> After <code>tya</code></h3>
+  <pre class="bg-light p-3">
+<code>
+tya              ; Transfer Y register to the Accumulator
+lsr              ; Logical Shift Right (divide by 2)
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Reduces the number of colors to <strong>128</strong>, creating a blocky gradient as each pair of Y values maps to the same color.</p>
+
+  <h3>3. Adding Multiple <code>lsr</code> Instructions</h3>
+  <pre class="bg-light p-3">
+<code>
+tya              ; Transfer Y register to the Accumulator
+lsr              ; Logical Shift Right (divide by 2)
+lsr              ; Logical Shift Right (divide by 4)
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Each <code>lsr</code> halves the number of colors:</p>
+  <ul>
+    <li>1 <code>lsr</code>: 128 colors</li>
+    <li>2 <code>lsr</code>: 64 colors</li>
+    <li>3 <code>lsr</code>: 32 colors</li>
+    <li>4 <code>lsr</code>: 16 colors</li>
+    <li>5 <code>lsr</code>: 8 colors</li>
+  </ul>
+  <p>The gradient becomes more segmented with larger blocks of repeated colors.</p>
+
+  <h3>4. Replacing <code>lsr</code> with <code>asl</code></h3>
+  <pre class="bg-light p-3">
+<code>
+tya              ; Transfer Y register to the Accumulator
+asl              ; Arithmetic Shift Left (multiply by 2)
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Colors repeat every 128 Y values due to overflow, creating a mirrored gradient effect.</p>
+
+  <h3>5. Adding Multiple <code>asl</code> Instructions</h3>
+  <pre class="bg-light p-3">
+<code>
+tya              ; Transfer Y register to the Accumulator
+asl              ; Arithmetic Shift Left (multiply by 2)
+asl              ; Arithmetic Shift Left (multiply by 4)
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Colors repeat more frequently as the overflow occurs faster:</p>
+  <ul>
+    <li>1 <code>asl</code>: Overflow every 128 values</li>
+    <li>2 <code>asl</code>: Overflow every 64 values</li>
+    <li>3 <code>asl</code>: Overflow every 32 values</li>
+  </ul>
+
+  <h3>6. Adding Multiple <code>iny</code> Instructions</h3>
+  <pre class="bg-light p-3">
+<code>
+iny              ; Increment Y
+iny              ; Increment Y
+sta ($40),y      ; Store the A value at the address (pointer) + Y
+</code>
+  </pre>
+  <p><strong>Effect:</strong> Skips pixels:</p>
+  <ul>
+    <li>1 <code>iny</code>: Fills all pixels.</li>
+    <li>2 <code>iny</code>: Fills every second pixel.</li>
+    <li>3 <code>iny</code>: Fills every third pixel.</li>
+  </ul>
+  <p>The resulting bitmap has gaps depending on the number of <code>iny</code> instructions.</p>
+</div>
+
+
+    <!-- <h2>Lab Screenshot</h2>
+    <div class="image-container text-center">
+      <img src="photos/lab1.jpg" alt="Lab 1 Screenshot" class="img-fluid rounded">
+    </div> -->
+
+    <h2>Reflections on Mistakes</h2>
+    <p>
+      While performing the lab, I initially miscalculated:
+    </p>
+    <ul>
+      <li><strong>Loop Iterations:</strong> I assumed the inner loop processed fewer pixels than the actual 256 per page.</li>
+      <li><strong>Branching Behavior:</strong> Misunderstood how <code>bne</code> interacts with loop counters.</li>
+      <li><strong>Page Handling:</strong> Ignored the significance of <code>inc $41</code> for page transitions.</li>
+    </ul>
+
+    <h2>Reflections on Assembly Language</h2>
+    <p>
+      Writing in assembly language revealed the level of detail required to control hardware directly. It was rewarding to see the results visually on the bitmap display, and optimizing the program was a challenging but enlightening experience.
+    </p>
+
+    <h2>Conclusion</h2>
+    <p>
+      Through this lab, I learned how to analyze, optimize, and experiment with assembly language on the 6502 emulator. From filling the display with colors to optimizing performance, it was an engaging and educational journey.
+    </p>
+  </div>
+
+  <!-- Visit Counter -->
+  <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitCount = localStorage.getItem(labName) || 0;
+        localStorage.setItem(labName, Number(visitCount) + 1);
+        const visitMessage = document.querySelector("#visit-count");
+        if (visitMessage) {
+          visitMessage.textContent = `You've visited this page ${Number(visitCount) + 1} times.`;
+        }
+      }
+    });
+
+
+  document.getElementById('toggleExperiments').addEventListener('click', function () {
+    const experimentsSection = document.getElementById('experimentsSection');
+    if (experimentsSection.style.display === 'none') {
+      experimentsSection.style.display = 'block';
+      this.textContent = 'Hide Experiments';
+    } else {
+      experimentsSection.style.display = 'none';
+      this.textContent = 'Show Experiments';
+    }
+  });
+
+  </script>
+</body>
+</html>
