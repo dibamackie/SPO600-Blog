@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important; /* Green navbar */
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .nav-link.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    pre {
+      font-family: "Courier New", Courier, monospace;
+    }
+    .image-container img {
+      max-width: 100%; /* Make the image responsive */
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body data-lab="intro">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">6502 and NES insights</h1>
+
+    <section class="mt-4">
+      <h2>The MOS Technology 6502</h2>
+      <p>
+        The MOS Technology 6502 is an 8-bit microprocessor created by Chuck Peddle and his team as a simpler, cheaper, and faster version of the Motorola 6800. It was used in many systems, including the Nintendo Entertainment System (NES). The NES used a custom version of the 6502 made by Ricoh. This version left out the binary-coded decimal mode but added 22 memory-mapped registers and built-in hardware for sound, controller input, and sprite data handling. Programming the 6502 involved using assembly language with instructions made up of a three-letter code and, sometimes, additional values. For certain instructions that worked on a single register, the register was included in the instruction itself—for example, using INX instead of INC X to increase the X register.
+      </p>
+    </section>
+    <img src="/photos/chip.jpg" alt="chip" />
+
+    <section class="mt-4">
+      <h2>The Nintendo Entertainment System (NES)</h2>
+      <p>
+        The Nintendo Entertainment System (NES) is an 8-bit home video game console made by Nintendo. It was first released in Japan on July 15, 1983, as the Family Computer (Famicom). In the U.S., it was redesigned and launched in test markets in October 1985, with a full release the next year. The NES was also sold in Europe, Australia, and parts of Asia during the 1980s under different names. It was part of the third generation of consoles and mainly competed with Sega's Master System.
+      </p>
+      <p>
+        The NES was created by Masayuki Uemura. Nintendo’s president, Hiroshi Yamauchi, wanted a simple and affordable console that could play arcade-style games using cartridges. The controller design was taken from Nintendo’s handheld Game & Watch devices. The version sold in the West was redesigned to look like a video cassette recorder. Nintendo also made accessories for the NES, like the NES Zapper light gun for shooting games and R.O.B., a toy robot used in some games.
+      </p>
+    </section>
+
+    <img src="/photos/nintendo.jpg" alt="nintendo" />
+
+
+    <section class="mt-4">
+      <h2>Graphics on Nintendo Entertainment System (NES)</h2>
+      <p>
+        It seems like the NES features a custom Picture Processing Unit (PPU) called Ricoh RP2C02. This chip is responsible for rendering graphics on the screen. The resolution is 256x240 pixels. It means the total number of pixels that can be displayed on the screen. And there is a funny fact about it. TVs in the 1980s were cropping the edges, so the designers had to keep that in mind by cutting off the game edges so the player wouldn’t miss anything.
+      </p>
+      <p>
+        Nintendo hardware could support 64 colors, but they were limited to 54 because the other 10 were not usable due to the limitations of how the Picture Processing Unit (PPU) worked.
+      </p>
+    </section>
+    <img src="/photos/graphic.png" alt="nintendo" />
+  </div>
+
+  <!-- Visit Counter -->
+  <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitCount = localStorage.getItem(labName) || 0;
+        localStorage.setItem(labName, Number(visitCount) + 1);
+        const visitMessage = document.querySelector("#visit-count");
+        if (visitMessage) {
+          visitMessage.textContent = `You've visited this page ${Number(visitCount) + 1} times.`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

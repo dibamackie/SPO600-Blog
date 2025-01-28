@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important; /* Green navbar */
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .nav-link.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    pre {
+      font-family: "Courier New", Courier, monospace;
+    }
+    .image-container img {
+      max-width: 100%; /* Make the image responsive */
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body data-lab="intro">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Basics of 6502 Assembly Language</h1>
+
+    <section class="mt-4">
+      <h2>What is the 6502 Processor?</h2>
+      <p>
+        It is a famous microprocessor from the 1970s and 1980s. It was used in early computers and gaming systems like Apple II, NES. 
+        The emulator is a modern program that mimics the behavior of this hardware, allowing you to learn about the 6502's functionality without needing physical hardware.
+      </p>
+    </section>
+
+    <section class="mt-4">
+      <h2>Core Concepts</h2>
+      <h3>1. Registers</h3>
+      <p>Registers are small, fast memory units within the processor that perform tasks:</p>
+      <ul>
+        <li><strong>Accumulator (A):</strong> Used for arithmetic and logic operations.</li>
+        <li><strong>Index Registers (X, Y):</strong> Used for addressing loops.</li>
+        <li><strong>Program Counter (PC):</strong> Keeps track of the current instruction's location in memory.</li>
+        <li><strong>Stack Pointer (SP):</strong> Points to the top of the stack.</li>
+        <li><strong>Processor Status (P):</strong> Tracks flags like Zero, Carry, Negative.</li>
+      </ul>
+
+      <h3>2. Memory</h3>
+      <ul>
+        <li>The 6502 addresses up to 64 KB of memory.</li>
+        <li>Memory is where instructions and data are stored.</li>
+        <li>Memory is addressed using hexadecimal ($0000 to $FFFF).</li>
+      </ul>
+
+      <h3>3. Instructions</h3>
+      <p>The 6502 uses a set of instructions (its "language") to perform tasks. Each instruction has an opcode (operation code):</p>
+      <ul>
+        <li><strong>LDA:</strong> Load Accumulator - load a value.</li>
+        <li><strong>STA:</strong> Store Accumulator value into memory.</li>
+        <li><strong>ADC:</strong> Add (with carry) - adds a value to the Accumulator.</li>
+        <li><strong>JMP:</strong> Move to a specific address.</li>
+      </ul>
+
+      <h3>4. Flags</h3>
+      <p>Flags are 1-bit indicators that show the result of an operation:</p>
+      <ul>
+        <li><strong>Carry (C):</strong> Set if there's a carry/borrow in arithmetic.</li>
+        <li><strong>Zero (Z):</strong> Set if the result of an operation is 0.</li>
+        <li><strong>Negative (N):</strong> Set if the result is negative.</li>
+        <li><strong>Overflow (V):</strong> Set if there's an overflow in signed arithmetic.</li>
+      </ul>
+    </section>
+
+    <section class="mt-4">
+      <h2>Examples to Understand the Concepts Better</h2>
+
+      <h3>Example 1</h3>
+      <pre>
+LDA #5      ; Load the value 5 into the accumulator
+CLC          ; Clear the carry flag (important for addition)
+ADC #10      ; Add 10 to the accumulator
+STA $0200    ; Save the result (15) to memory location $0200
+      </pre>
+
+      <h3>Example 2</h3>
+      <pre>
+LDA #8       ; Load the value 8 into the accumulator
+SEC          ; Set the carry flag (important for subtraction)
+SBC #3       ; Subtract 3 from the accumulator
+STA $0300    ; Save the result (5) to memory location $0300
+      </pre>
+
+      <h3>Example 3</h3>
+      <pre>
+LDA #5       ; Load the value 5 into the accumulator
+STA $0400    ; Save the result (5) to memory location $0400
+Loop:        ; This is a label pointing to the next instruction
+  LDA $0400  ; Load the current value at $0400
+  BEQ DONE   ; If the value is 0, jump to the DONE label
+  DEC $0400  ; Decrement the value at $0400
+  JMP Loop   ; Jump back to the Loop label
+DONE:
+  BRK        ; Break (end the program)
+      </pre>
+      <p><strong>Explanation for Loop:</strong> First, we load value 5 and then check if the value is 0 or not. If it was 0, it jumps to the DONE label and the program ends. Otherwise, it keeps decrementing one value at a time until the value gets to 0 and jumps to the DONE label.</p>
+    </section>
+  </div>
+
+  <!-- Visit Counter -->
+  <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitCount = localStorage.getItem(labName) || 0;
+        localStorage.setItem(labName, Number(visitCount) + 1);
+        const visitMessage = document.querySelector("#visit-count");
+        if (visitMessage) {
+          visitMessage.textContent = `You've visited this page ${Number(visitCount) + 1} times.`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
