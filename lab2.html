@@ -2,73 +2,87 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lab 1: 6502 Bitmap Display</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Intro to My 6502 Programming Journey</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Welcome to my 6502 Programming Journey. Explore my labs and projects.">
+  <meta name="keywords" content="6502, programming, labs, Diba Makki">
+  <meta name="author" content="Diba Makki">
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Intro to My 6502 Programming Journey">
+  <meta property="og:description" content="Welcome to my 6502 Programming Journey. Explore my labs and projects.">
+  <meta property="og:image" content="path/to/your/image.jpg">
+  <meta property="og:url" content="https://yourwebsite.com/index.html">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Intro to My 6502 Programming Journey">
+  <meta name="twitter:description" content="Welcome to my 6502 Programming Journey. Explore my labs and projects.">
+  <meta name="twitter:image" content="path/to/your/image.jpg">
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://yourwebsite.com/index.html">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-    }
-    .navbar {
-      background-color: #28a745 !important; /* Green navbar */
-    }
-    .navbar-brand, .nav-link {
-      color: white !important;
-    }
-    .nav-link.active {
-      font-weight: bold;
-      text-decoration: underline;
-    }
-    pre {
-      font-family: "Courier New", Courier, monospace;
-    }
-    .image-container img {
-      max-width: 100%; /* Make the image responsive */
-      height: auto;
-      margin-top: 20px;
-    }
-  </style>
+  
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Optional: Prism.js for Syntax Highlighting -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" rel="stylesheet" />
 </head>
-<body data-lab="lab1">
-  <nav class="navbar navbar-expand-lg">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">Diba Makki</a>
-            <a class="navbar-brand" href="index.html">My Labs Blog</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Home</a>
-          </li>
-          <li class="nav-item">
-
-          </li>
-        </ul>
+<body data-lab="intro">
+  <header>
+    <nav class="navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="index.html">Diba Makki</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="labs.html">Labs</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="projects.html">Projects</a>
+            </li>
+            <!-- Add more links as needed -->
+          </ul>
+        </div>
       </div>
-    </div>
-  </nav>
-<body>
-  <div class="container">
-    <br>
-    <br>
-    <h1 class="text-center">Lab 2 - Mob Programming</h1>
+    </nav>
+  </header>
 
-    <section>
-      <h2>Introduction</h2>
-      <p>
-        In this lab, we introduce Mob Programming, a collaborative form of Pair Programming where a group works on a single piece of code together. The task is to modify a 6502 Assembly Program that moves a 5x5 graphic diagonally around the screen, ensuring it bounces off the edges while experimenting with different movement patterns.
-      </p>
+  <main>
+    <section class="hero-section text-center">
+      <div class="container">
+        <h1 class="display-4">Welcome to My 6502 Programming Journey</h1>
+        <p class="lead">Explore my labs and projects.</p>
+      </div>
     </section>
 
-    <section>
-      <h2>1. Setup</h2>
-      <p>
-        Start by opening <a href="http://6502.cdot.systems" target="_blank">6502 Emulator</a> and pasting the following code:
-      </p>
-      <pre>
+    <!-- New Content Starts Here -->
+    <section class="container my-5">
+      <h2>Lab: Introduction to Mob Programming</h2>
+      <p>In this lab, we want to introduce Mob Programming. It’s another form of Pair Programming. It means a group of people working on a single piece of code collaboratively. The task was to modify the 6502 Assembly Program that moves a 5x5 graphic diagonally around the screen. We assemble and then run the code on <a href="http://6502.cdot.systems" target="_blank" rel="noopener">http://6502.cdot.systems</a>. The goal for this lab is to make it bounce off the edges and also challenge it by changing the x and y to make it move differently.</p>
+
+      <h3>1. Setup</h3>
+      <p>We start by opening <a href="http://6502.cdot.systems" target="_blank" rel="noopener">http://6502.cdot.systems</a> and pasting the following code:</p>
+      <pre><code class="language-6502">
 ; draw-image-subroutine.6502
 ; Moves a 5x5 graphic diagonally across the screen
 
@@ -77,25 +91,30 @@ define XPOS $20
 define YPOS $21
 
 START:
+  ; Set up the width and height elements of the data structure
   LDA #$05
   STA $12       ; IMAGE WIDTH
   STA $13       ; IMAGE HEIGHT
 
+  ; Set initial position X=Y=0
   LDA #$00
   STA XPOS
   STA YPOS
 
 MAINLOOP:
+  ; Set pointer to the image
   LDA #<G_O
   STA $10
   LDA #>G_O
   STA $11
 
-  LDA #$10
-  LDX XPOS
-  LDY YPOS
-  JSR DRAW
+  ; Place the image on the screen
+  LDA #$10  ; Address in zeropage of the data structure
+  LDX XPOS  ; X position
+  LDY YPOS  ; Y position
+  JSR DRAW  ; Call the subroutine
 
+  ; Delay to show the image
   LDY #$00
   LDX #$50
 DELAY:
@@ -104,88 +123,73 @@ DELAY:
   DEX
   BNE DELAY
 
+  ; Set pointer to the blank graphic
   LDA #<G_BLANK
   STA $10
   LDA #>G_BLANK
   STA $11
 
-  LDA #$10
+  ; Draw the blank graphic to clear the old image
+  LDA #$10 ; LOCATION OF DATA STRUCTURE
   LDX XPOS
   LDY YPOS
   JSR DRAW
 
+  ; Increment the position
   INC XPOS
   INC YPOS
 
+  ; Continue for 29 frames of animation
   LDA #28
   CMP XPOS
   BNE MAINLOOP
 
+  ; Repeat infinitely
   JMP START
-      </pre>
-    </section>
 
-    <section>
-      <h2>2. Testing the Code</h2>
-      <p>
-        Click the "Assemble" button and run the code. The speed of execution can be adjusted using the emulator’s Speed button.
-      </p>
-    </section>
+; DRAW subroutine (omitted for brevity)
+; 5x5 pixel images (omitted for brevity)
+      </code></pre>
 
-    <section>
-      <h2>3. Modifying X and Y Values</h2>
-      <p>
-        Change the starting X and Y positions in the code:
-      </p>
-      <pre>
+      <h3>2. Testing the Code</h3>
+      <p>Now we need to click on the assembly button and run. We also have the option to change the speed from the top part. The Speed button controls the execution speed of the emulator. Basically, it adjusts how fast the program runs.</p>
+
+      <h3>3. Different Values for X and Y</h3>
+      <p>By modifying the following piece of code:</p>
+      <pre><code class="language-6502">
+; Set initial position X=10, Y=5
   LDA #10
   STA XPOS
   LDA #5
   STA YPOS
-      </pre>
-      <p>
-        The graphic will now start from (10,5) and move diagonally.
-      </p>
-    <p>
-        now lets set up the heigh and width:
-    </p>
-<pre>
-    ; Set up the width and height elements of the data structure
-  LDA #$05
-  STA $12       ; IMAGE WIDTH
-  LDA #$06
-  STA $13       ; IMAGE HEIGHT
-</pre>
-<p>
-    by adding another LDA after loading and store the first value in accumulator we'll also be able to get a patter of the Yellow X as well if you are also curious you can try it.
+      </code></pre>
+      <p>Now with this change, the graphic will start from (10, 5) and move diagonally as the X and Y values are incremented in the MAINLOOP, same as before.</p>
 
-</p>
-
-    </section>
-
-    <section>
-      <h2>4. Setting Movement and Direction</h2>
-      <p>
-        To allow movement in different directions, define new variables:
-      </p>
-      <pre>
-define XINC $22  ; X increment (+1 or -1)
-define YINC $23  ; Y increment (+1 or -1)
-      </pre>
-      <p>
-        Set initial values:
-      </p>
-      <pre>
+      <h3>4. Setting Movement and Direction with Increment Values</h3>
+      <p>To implement an X increment and Y increment that can be -1 or +1, we use single bytes to represent them. For example:</p>
+      <ul>
+        <li>+1 as <code>$01</code></li>
+        <li>-1 as <code>$FF</code></li>
+      </ul>
+      <p>We can define two new zero-page variables to hold the X and Y increments:</p>
+      <pre><code class="language-6502">
+; Zero-page variables
+define XPOS $20      ; Current X position
+define YPOS $21      ; Current Y position
+define XINC $22      ; X increment (can be $01 or $FF)
+define YINC $23      ; Y increment (can be $01 or $FF)
+      </code></pre>
+      <p>Then we can update the code to set these increments at the start of the program and use them to change the XPOS and YPOS in the MAINLOOP.</p>
+      <pre><code class="language-6502">
+; Set initial increments (XINC = +1, YINC = -1)
   LDA #$01      ; +1
   STA XINC
   LDA #$FF      ; -1
   STA YINC
-      </pre>
-      <p>
-        Modify the position update logic in the MAINLOOP:
-      </p>
-      <pre>
-  LDA XPOS
+      </code></pre>
+      <p>If we test the code now, we don’t see any difference. However, by updating the position using the increment right after drawing the blank graphic to clear the old image and before continuing for 29 frames of animation, using the following instructions:</p>
+      <pre><code class="language-6502">
+LDA XPOS
   CLC
   ADC XINC
   STA XPOS
@@ -194,20 +198,38 @@ define YINC $23  ; Y increment (+1 or -1)
   CLC
   ADC YINC
   STA YPOS
-      </pre>
-      <p>
-        The movement is now directional based on XINC and YINC values:
-      </p>
+      </code></pre>
+      <p>The ADD with carry instruction handles the signed arithmetic.</p>
       <ul>
-        <li><strong>XINC = $01, YINC = $FF</strong>: Moves right and up</li>
-        <li><strong>XINC = $FF, YINC = $01</strong>: Moves left and down</li>
-        <li><strong>XINC = $01, YINC = $01</strong>: Moves right and down</li>
-        <li><strong>XINC = $FF, YINC = $FF</strong>: Moves left and up</li>
+        <li>If <code>XINC = $01</code>, <code>XPOS</code> increases by 1.</li>
+        <li>If <code>XINC = $FF</code>, <code>XPOS</code> decreases by 1.</li>
       </ul>
-    </section>
+      <p>We can always customize the movement by changing the value of <code>XINC</code> and <code>YINC</code> to create different movement patterns. Now, the starting position and direction of the movement have been changed as follows:</p>
+      <ul>
+        <li>If <code>XINC = $01</code> and <code>YINC = $FF</code>:
+          <ul>
+            <li>The graphic will move right and up.</li>
+          </ul>
+        </li>
+        <li>If <code>XINC = $FF</code> and <code>YINC = $01</code>:
+          <ul>
+            <li>The graphic will move left and down.</li>
+          </ul>
+        </li>
+        <li>If <code>XINC = $01</code> and <code>YINC = $01</code>:
+          <ul>
+            <li>The graphic will move right and down.</li>
+          </ul>
+        </li>
+        <li>If <code>XINC = $FF</code> and <code>YINC = $FF</code>:
+          <ul>
+            <li>The graphic will move left and up.</li>
+          </ul>
+        </li>
+      </ul>
 
-    <section>
-      <h2>5. Example of Movement</h2>
+      <h4>Example of Movement</h4>
+      <p>If <code>XINC = $01</code> and <code>YINC = $FF</code>, the graphic will move as follows:</p>
       <table class="table table-bordered">
         <thead>
           <tr>
@@ -218,20 +240,525 @@ define YINC $23  ; Y increment (+1 or -1)
           </tr>
         </thead>
         <tbody>
-          <tr><td>1</td><td>10</td><td>5</td><td>Start at (10,5)</td></tr>
-          <tr><td>2</td><td>11</td><td>4</td><td>Right and up</td></tr>
-          <tr><td>3</td><td>12</td><td>3</td><td>Right and up</td></tr>
-          <tr><td>4</td><td>13</td><td>2</td><td>Right and up</td></tr>
+          <tr>
+            <td>1</td>
+            <td>10</td>
+            <td>5</td>
+            <td>Start at (10, 5)</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>11</td>
+            <td>4</td>
+            <td>Right and up</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>12</td>
+            <td>3</td>
+            <td>Right and up</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>13</td>
+            <td>2</td>
+            <td>Right and up</td>
+          </tr>
+          <!-- Continue as needed -->
         </tbody>
       </table>
-    </section>
-  <section>
-    <h2>6. Horizental and Vertical Movemnet</h2>
-    <P>still working on it ...</P>
-  </section>
-</div>
 
-  <!-- Bootstrap JS -->
+      <h3>5. Graphic Bounce</h3>
+      <p>To be honest, I couldn’t figure out how to make the graphic bounce, and I was still working on it to make it happen. However, my teammate from week 3, Kaung Khant Zaw, did it. I’ll break it down into steps so you and I can understand what’s happening:</p>
+
+      <h4>Zero-page Variables for Position and Direction</h4>
+      <p>The <code>XPOS</code> and <code>YPOS</code> store the current position, but we need to define <code>XINC</code> and <code>YINC</code> to make it easy to access in the 6502 CPU.</p>
+      <blockquote class="blockquote">
+        <p><strong>Question:</strong> What are <code>XINC</code> and <code>YINC</code>?</p>
+        <p>They store the direction of the movements.</p>
+        <ul>
+          <li><code>XINC = 1</code> moves right</li>
+          <li><code>XINC = -1</code> or <code>#FF</code> moves left</li>
+          <li><code>YINC = 1</code> moves down</li>
+          <li><code>YINC = -1</code> moves up</li>
+        </ul>
+      </blockquote>
+      <pre><code class="language-6502">
+define XPOS    $20      ; Current X position
+define YPOS    $21      ; Current Y position
+define XINC    $22      ; X increment (-1 or +1)
+define YINC    $23      ; Y increment (-1 or +1)
+      </code></pre>
+
+      <h4>Initialization in Start</h4>
+      <blockquote class="blockquote">
+        <p><strong>Question:</strong> What are the differences between <code>XPOS</code>, <code>YPOS</code> and <code>XINC</code>, <code>YINC</code>?</p>
+      </blockquote>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Key Difference</th>
+            <th>Snippet</th>
+            <th>What It Controls</th>
+            <th>Example Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>STA XPOS, STA YPOS</td>
+            <td>Initial Position</td>
+            <td>Where it starts</td>
+            <td>XPOS = 0, YPOS = 0 (Top-left)</td>
+          </tr>
+          <tr>
+            <td>STA XINC, STA YINC</td>
+            <td>Movement Direction</td>
+            <td>Where it moves</td>
+            <td>XINC = 1, YINC = 1 (Moves right & down)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h4>MAINLOOP Logic</h4>
+      <ol>
+        <li>
+          <strong>Updating the X Position:</strong>
+          <pre><code class="language-6502">
+; Check X direction
+LDA XINC
+CMP #$01
+BEQ INC_XPOS
+; If XINC = $FF (-1), decrement XPOS
+LDA XPOS
+SEC
+SBC #$01
+STA XPOS
+JMP CHECK_X_BOUNDARY
+
+INC_XPOS:
+; If XINC = +1, increment XPOS
+INC XPOS
+          </code></pre>
+        </li>
+        <li>
+          <strong>Checking the X Boundaries:</strong>
+          <pre><code class="language-6502">
+CHECK_X_BOUNDARY:
+LDA XPOS
+CMP #$1B  ; 27 (screen width - image width)
+BCC NO_CHANGE_X
+; If XPOS >= 27, reverse XINC to -1
+LDA #$FF
+STA XINC
+JMP UPDATE_Y
+
+NO_CHANGE_X:
+; Check if XPOS <= 0
+LDA XPOS
+CMP #$00
+BNE UPDATE_Y
+; If XPOS <= 0, reverse XINC to +1
+LDA #$01
+STA XINC
+          </code></pre>
+        </li>
+        <li>
+          <strong>Updating the Y Position:</strong>
+          <pre><code class="language-6502">
+UPDATE_Y:
+; Check Y direction
+LDA YINC
+CMP #$01
+BEQ INC_YPOS
+; If YINC = $FF (-1), decrement YPOS
+LDA YPOS
+SEC
+SBC #$01
+STA YPOS
+JMP CHECK_Y_BOUNDARY
+
+INC_YPOS:
+; If YINC = +1, increment YPOS
+INC YPOS
+          </code></pre>
+        </li>
+        <li>
+          <strong>Checking the Y Boundaries:</strong>
+          <pre><code class="language-6502">
+CHECK_Y_BOUNDARY:
+LDA YPOS
+CMP #$1B
+BCC NO_CHANGE_Y
+; If YPOS >= 27, reverse YINC to -1
+LDA #$FF
+STA YINC
+JMP MAINLOOP
+
+NO_CHANGE_Y:
+; Check if YPOS <= 0
+LDA YPOS
+CMP #$00
+BNE MAINLOOP
+; If YPOS <= 0, reverse YINC to +1
+LDA #$01
+STA YINC
+
+JMP MAINLOOP
+          </code></pre>
+        </li>
+      </ol>
+      <p>By repeating the logic with the <code>JMP MAINLOOP</code> instruction, the graphic moves diagonally and bounces off the edges.</p>
+
+      <h3>Full Code Example</h3>
+      <p>Here is the full code. You can give it a try:</p>
+      <pre><code class="language-6502">
+;
+; draw-image-subroutine.bouncing.6502
+;
+; This routine places an arbitrary 
+; rectangular image on the screen at given
+; coordinates and makes it bounce within 
+; the screen boundaries.
+;
+; Chris Tyler 2024-09-17
+; Licensed under GPLv2+
+;
+
+;
+; The subroutine is below starting at the 
+; label "DRAW:"
+;
+
+; Test code for our subroutine
+; Moves an image diagonally across the screen and bounces it off the edges
+
+; Zero-page variables
+define XPOS    $20      ; Current X position
+define YPOS    $21      ; Current Y position
+define XINC    $22      ; X increment (-1 or +1)
+define YINC    $23      ; Y increment (-1 or +1)
+
+START:
+
+    ; Set up the width and height elements of the data structure
+    LDA #$05
+    STA $12       ; IMAGE WIDTH
+    STA $13       ; IMAGE HEIGHT
+
+    ; Set initial position
+    LDA #$0A      ; 10 in decimal
+    STA XPOS
+    LDA #$05      ; 5 in decimal
+    STA YPOS
+
+    ; Initialize increments: XINC = +1, YINC = +1
+    LDA #$01      ; +1 represented as $01
+    STA XINC
+    STA YINC
+
+MAINLOOP:
+
+    ; Set pointer to the image
+    ; Use G_O or G_X as desired
+    ; The syntax #<LABEL returns the low byte of LABEL
+    ; The syntax #>LABEL returns the high byte of LABEL
+
+    LDA #<G_O
+    STA $10
+    LDA #>G_O
+    STA $11
+
+    ; Place the image on the screen
+    LDA #$10      ; Address in zeropage of the data structure
+    LDX XPOS      ; X position
+    LDY YPOS      ; Y position
+    JSR DRAW      ; Call the subroutine
+
+    ; Delay to show the image
+    LDY #$00
+    LDX #$50
+DELAY:
+    DEY
+    BNE DELAY
+    DEX
+    BNE DELAY
+
+    ; Set pointer to the blank graphic
+    LDA #<G_BLANK
+    STA $10
+    LDA #>G_BLANK
+    STA $11
+
+    ; Draw the blank graphic to clear the old image
+    LDA #$10      ; LOCATION OF DATA STRUCTURE
+    LDX XPOS
+    LDY YPOS
+    JSR DRAW
+
+    ; Update position based on increments
+    ; Check X direction
+    LDA XINC
+    CMP #$01
+    BEQ INC_XPOS
+    ; If XINC = $FF (-1), decrement XPOS
+    LDA XPOS
+    SEC
+    SBC #$01
+    STA XPOS
+    JMP CHECK_X_BOUNDARY
+
+INC_XPOS:
+    ; If XINC = +1, increment XPOS
+    INC XPOS
+
+CHECK_X_BOUNDARY:
+    ; Check if XPOS has hit screen boundaries
+    ; Screen width is 32 pixels and image width is 5
+    ; Max XPOS = 32 - 5 = 27 ($1B)
+    LDA XPOS
+    CMP #$1B
+    BCC NO_CHANGE_X
+    ; If XPOS >= 27, reverse XINC to -1
+    LDA #$FF
+    STA XINC
+    JMP UPDATE_Y
+
+NO_CHANGE_X:
+    ; Check if XPOS <= 0
+    LDA XPOS
+    CMP #$00
+    BNE UPDATE_Y
+    ; If XPOS <= 0, reverse XINC to +1
+    LDA #$01
+    STA XINC
+
+UPDATE_Y:
+    ; Check Y direction
+    LDA YINC
+    CMP #$01
+    BEQ INC_YPOS
+    ; If YINC = $FF (-1), decrement YPOS
+    LDA YPOS
+    SEC
+    SBC #$01
+    STA YPOS
+    JMP CHECK_Y_BOUNDARY
+
+INC_YPOS:
+    ; If YINC = +1, increment YPOS
+    INC YPOS
+
+CHECK_Y_BOUNDARY:
+    ; Check if YPOS has hit screen boundaries
+    LDA YPOS
+    CMP #$1B
+    BCC NO_CHANGE_Y
+    ; If YPOS >= 27, reverse YINC to -1
+    LDA #$FF
+    STA YINC
+    JMP MAINLOOP
+
+NO_CHANGE_Y:
+    ; Check if YPOS <= 0
+    LDA YPOS
+    CMP #$00
+    BNE MAINLOOP
+    ; If YPOS <= 0, reverse YINC to +1
+    LDA #$01
+    STA YINC
+
+    JMP MAINLOOP
+
+; ==========================================
+;
+; DRAW :: Subroutine to draw an image on 
+;         the bitmapped display
+;
+; Entry conditions:
+;    A - location in zero page of: 
+;        a pointer to the image (2 bytes)
+;        followed by the image width (1 byte)
+;        followed by the image height (1 byte)
+;    X - horizontal location to put the image
+;    Y - vertical location to put the image
+;
+; Exit conditions:
+;    All registers are undefined
+;
+; Zero-page memory locations
+define IMGPTR    $A0
+define IMGPTRH   $A1
+define IMGWIDTH  $A2
+define IMGHEIGHT $A3
+define SCRPTR    $A4
+define SCRPTRH   $A5
+define SCRX      $A6
+define SCRY      $A7
+
+DRAW:
+    ; SAVE THE X AND Y REG VALUES
+    STY SCRY
+    STX SCRX
+
+    ; GET THE DATA STRUCTURE
+    TAY
+    LDA $0000,Y
+    STA IMGPTR
+    LDA $0001,Y
+    STA IMGPTRH
+    LDA $0002,Y
+    STA IMGWIDTH
+    LDA $0003,Y
+    STA IMGHEIGHT
+
+    ; CALCULATE THE START OF THE IMAGE ON
+    ; SCREEN AND PLACE IN SCRPTRH
+    ;
+    ; THIS IS $0200 (START OF SCREEN) +
+    ; SCRX + SCRY * 32
+    ; 
+    ; WE'LL DO THE MULTIPLICATION FIRST
+    ; START BY PLACING SCRY INTO SCRPTR
+    LDA #$00
+    STA SCRPTRH
+    LDA SCRY
+    STA SCRPTR
+    ; NOW DO 5 LEFT SHIFTS TO MULTIPLY BY 32
+    LDY #$05     ; NUMBER OF SHIFTS
+MULT:
+    ASL SCRPTR   ; PERFORM 16-BIT LEFT SHIFT
+    ROL SCRPTRH
+    DEY
+    BNE MULT
+
+    ; NOW ADD THE X VALUE
+    LDA SCRX
+    CLC
+    ADC SCRPTR
+    STA SCRPTR
+    LDA #$00
+    ADC SCRPTRH
+    STA SCRPTRH
+
+    ; NOW ADD THE SCREEN BASE ADDRESS OF $0200
+    ; SINCE THE LOW BYTE IS $00 WE CAN IGNORE IT
+    LDA #$02
+    CLC
+    ADC SCRPTRH
+    STA SCRPTRH
+    ; NOTE WE COULD HAVE DONE TWO: INC SCRPTRH
+
+    ; NOW WE HAVE A POINTER TO THE IMAGE IN MEM
+    ; COPY A ROW OF IMAGE DATA
+COPYROW:
+    LDY #$00
+ROWLOOP:
+    LDA (IMGPTR),Y
+    STA (SCRPTR),Y
+    INY
+    CPY IMGWIDTH
+    BNE ROWLOOP
+
+    ; NOW WE NEED TO ADVANCE TO THE NEXT ROW
+    ; ADD IMGWIDTH TO THE IMGPTR
+    LDA IMGWIDTH
+    CLC
+    ADC IMGPTR
+    STA IMGPTR
+    LDA #$00
+    ADC IMGPTRH
+    STA IMGPTRH
+
+    ; ADD 32 TO THE SCRPTR
+    LDA #32
+    CLC
+    ADC SCRPTR
+    STA SCRPTR
+    LDA #$00
+    ADC SCRPTRH
+    STA SCRPTRH
+
+    ; DECREMENT THE LINE COUNT AND SEE IF WE'RE
+    ; DONE
+    DEC IMGHEIGHT
+    BNE COPYROW
+
+    RTS
+
+; ==========================================
+
+; 5x5 pixel images
+
+; Image of a blue "O" on black background
+G_O:
+DCB $00,$0e,$0e,$0e,$00
+DCB $0e,$00,$00,$00,$0e
+DCB $0e,$00,$00,$00,$0e
+DCB $0e,$00,$00,$00,$0e
+DCB $00,$0e,$0e,$0e,$00
+
+; Image of a yellow "X" on a black background
+G_X:
+DCB $07,$00,$00,$00,$07
+DCB $00,$07,$00,$07,$00
+DCB $00,$00,$07,$00,$00
+DCB $00,$07,$00,$07,$00
+DCB $07,$00,$00,$00,$07
+
+; Image of a black square
+G_BLANK:
+DCB $00,$00,$00,$00,$00
+DCB $00,$00,$00,$00,$00
+DCB $00,$00,$00,$00,$00
+DCB $00,$00,$00,$00,$00
+DCB $00,$00,$00,$00,$00
+      </code></pre>
+
+      <h3>6. Result</h3>
+      <p>As we can see, we finally figured out step by step how to make the bouncing 5×5 graphic move diagonally. I see this as a big achievement. Although I didn’t do it all on my own, that’s what mob programming is all about—teamwork, right? This lab basically taught us how to manage memory efficiently by using zero-page variables and how to handle basic graphics using assembly programming and loops.</p>
+    </section>
+    <!-- New Content Ends Here -->
+
+    <!-- Visit Counter -->
+    <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+    <!-- Footer -->
+    <footer class="text-center py-3 bg-light mt-5">
+      <p>&copy; 2023 Diba Makki. All rights reserved.</p>
+      <!-- Optional: Social Media Links -->
+    </footer>
+  </main>
+
+  <!-- Bootstrap JS Bundle -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- Prism.js for Syntax Highlighting -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-6502.min.js"></script>
+
+  <!-- External JavaScript -->
+  <script src="scripts.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitMessage = document.querySelector("#visit-count");
+        if (!visitMessage) return;
+
+        if (typeof(Storage) !== "undefined") {
+          try {
+            const visitCount = parseInt(localStorage.getItem(labName)) || 0;
+            localStorage.setItem(labName, visitCount + 1);
+            visitMessage.textContent = `You've visited this page ${visitCount + 1} times.`;
+          } catch (error) {
+            console.error("Error accessing localStorage:", error);
+            visitMessage.textContent = "Visit count is unavailable.";
+          }
+        } else {
+          visitMessage.textContent = "Your browser does not support localStorage.";
+        }
+      }
+    });
+  </script>
 </body>
 </html>
