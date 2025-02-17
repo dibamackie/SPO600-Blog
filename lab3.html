@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 3 - Lucky Digits</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .container {
+      max-width: 800px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Lucky Digits: An Infinite Guessing Game with Color</h1>
+    
+    <section class="mt-4">
+      <h2>Introduction</h2>
+      <p>Initially, I planned to build a Snake game, but after facing challenges with movement, I switched to a simpler guessing game called Lucky Digits. This project was exciting and challenging as I explored low-level programming, <a href="String.html" target="_blank" rel="noopener">ROM routines</a>, and memory manipulation.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>How the Game Works</h2>
+      <ul>
+        <li>The game generates a random number.</li>
+        <li>The user guesses a number between 0 and 5.</li>
+        <li>The game compares the user input with the generated number.</li>
+        <li>If correct, the screen turns green; if incorrect, it turns red.</li>
+        <li>The game continues until the user guesses correctly.</li>
+      </ul>
+    </section>
+
+    <section class="mt-4">
+      <h2>Code Walkthrough</h2>
+      <h3>Initialization</h3>
+      <pre>
+START:
+    LDA $FE        ; Load random value from memory
+    AND #$07       ; Mask out upper bits, keeping values 1-5
+    CLC
+    ADC #$01       ; Ensure within range 1-5
+    STA random_number
+      </pre>
+
+      <h3>User Input Handler</h3>
+      <pre>
+GET_NUMBER:
+    LDA #$00        ; Clear value
+    STA value
+    JSR CHRIN       ; Get input character
+    CMP #$30        ; Ensure valid digit ('0')
+    BCC GET_NUMBER
+    CMP #$36        ; Ensure valid digit ('5')
+    BCS GET_NUMBER
+    SEC
+    SBC #$30        ; Convert ASCII to binary
+    STA value
+    JSR CHROUT
+      </pre>
+
+      <h3>Screen Color Change</h3>
+      <pre>
+CORRECT:
+    LDA #$05      ; Green color
+    JSR SET_COLOR
+    JMP END_GAME  
+INCORRECT:
+    LDA #$02      ; Red color
+    JSR SET_COLOR
+    JMP GUESSNUMBERS  
+      </pre>
+
+      <h3>Color Fill Routine</h3>
+      <pre>
+SET_COLOR:
+    LDY #$00
+    STY SCRN_PTR
+    LDX #$02
+    STX SCRN_PTR_H
+    LDX #$04   ; Pages to fill
+fill_screen:
+    STA (SCRN_PTR),Y
+    INY
+    BNE fill_screen
+    INC SCRN_PTR_H
+    DEX
+    BNE fill_screen
+    RTS
+      </pre>
+    </section>
+
+    <section class="mt-4">
+      <h2>Challenges and Learning</h2>
+      <p>Working with assembly requires a deep understanding of memory operations. Debugging was particularly difficult as there were no built-in debugging tools. Managing screen color changes required careful memory handling. I experimented with ROM routines before implementing this lab.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>References and Inspirations</h2>
+      <ul>
+        <li><a href="http://spo600.cdot.systems/doku.php?id=spo600:start" target="_blank">SPO600 Course Labs and Videos by Chris Tyler</a> – Great for understanding 6502 assembly.</li>
+        <li><a href="https://github.com/ctyler/6502js-code/blob/master/colour-selector.6502" target="_blank">Chris Tyler’s 6502 Color Selector Repository</a> – Useful for color manipulation in assembly.</li>
+        <li><a href="https://www.youtube.com/watch?v=mexAxf1XML8" target="_blank">YouTube Video on 6502 Assembly</a> – Helpful breakdown of key 6502 programming concepts.</li>
+      </ul>
+    </section>
+
+    <section class="mt-4">
+      <h2>Conclusion</h2>
+      <p>Building Lucky Digits was a fascinating experience in low-level programming. I plan to improve this game with animations and remain enthusiastic about eventually implementing a Snake game.</p>
+    </section>
+
+    <!-- New Section for Additional Assembly Code -->
+    <section class="mt-4">
+      <h2>Full Assembly Code</h2>
+      <pre>
+; Lucky Digits - Infinite Guessing Game with Color Change
+; If correct, screen turns GREEN
+; If incorrect, screen turns RED
+
+; ROM routine entry points
+define      SCINIT      $ff81 ; initialize/clear screen
+define      CHRIN       $ffcf ; input character from keyboard
+define      CHROUT      $ffd2 ; output character to screen
+define      SCREEN      $ffed ; get screen size
+define      PLOT        $fff0 ; get/set cursor coordinates
+
+; Constants
+define      random_number $0082; Define random variable
+define      value        $23    ; Temporary storage for user input
+define      color        $24    ; Color variable
+
+; Zero-page variables
+define        PRINT_PTR    $00
+define        PRINT_PTR_H    $01
+define        SCRN_PTR    $03
+define        SCRN_PTR_H  $04
+
+; Start of program
+    jsr PRINT           ; Print title
+    dcb "L","u","c","k","y",32,"D","i","g","i","t","s",00
+
+START:
+    LDA $FE        ; Load random value from memory
+    AND #$07       ; Mask out upper bits, keeping only values 1-5
+    CLC
+    ADC #$01       ; Ensure it's within 1-5
+    STA random_number  ; Store valid random number
+
+    LDA #$02
+    STA color  
+
+; Main game loop
+GUESSNUMBERS:
+    jsr PRINT
+    dcb $0d,"C","a","n",32,"y","o","u",32,"c","r","a","c","k",32,"t","h","e",32,"c","o","d","e","?",$0d
+    dcb "P","i","c","k",32,"a",32,"l","u","c","k","y",32,"n","u","m","b","e","r","!",$0d
+    dcb "E","n","t","e","r",32,"a",32,"n","u","m","b","e","r",32,"b","e","t","w","e","e","n",32,"0","-","5",":",32,32,00
+
+GET_NUMBER:
+    LDA #$00        ; Clear value
+    STA value
+    JSR CHRIN       ; Get input character
+    CMP #$30        ; Ensure valid digit ('0')
+    BCC GET_NUMBER
+    CMP #$36        ; Ensure valid digit ('5')
+    BCS GET_NUMBER
+
+    SEC
+    SBC #$30        ; Convert ASCII to binary
+    STA value       ; Store input
+    jsr CHROUT
+
+    lda random_number
+    cmp value
+    beq CORRECT   ; Correct guess
+    jmp INCORRECT
+
+; Correct guess - Turn screen GREEN
+CORRECT:
+    jsr PRINT
+    dcb $0d,"B","r","a","v","o","!",32,"Y","o","u",32,"f","o","u","n","d",32,"t","h","e",32,"l","u","c","k","y",32,"d","i","g","i","t","!",00
+    lda #$05      ; Green color
+    jsr SET_COLOR 
+    jmp END_GAME  
+
+; Incorrect guess - Turn screen RED, game continues
+INCORRECT:
+    jsr PRINT
+    dcb $0d,"N","o","t",32,"q","u","i","t","e","!",32,"T","r","y",32,"a","g","a","i","n",46,46,46,00
+    lda #$02      ; Red color
+    jsr SET_COLOR
+    jmp GUESSNUMBERS  ; Loop back to guessing
+
+END_GAME:
+    jsr PRINT
+    dcb $0d,"W","e","l","l",32,"p","l","a","y","e","d","!",32,"T","h","a","n","k","s",32,"f","o","r",32,"p","l","a","y","i","n","g",32,"L","u","c","k","y",32,"D","i","g","i","t","s","!",00
+    RTS
+
+; Color Fill Routine
+SET_COLOR:
+    ldy #$00
+    sty SCRN_PTR
+    ldx #$02
+    stx SCRN_PTR_H
+    ldx #$04   ; Pages to fill
+fill_screen:
+    sta (SCRN_PTR),y
+    iny
+    bne fill_screen
+    inc SCRN_PTR_H
+    dex
+    bne fill_screen
+    rts
+
+; Print Routine
+PRINT:
+    pla
+    clc
+    adc #$01
+    sta PRINT_PTR
+    pla
+    sta PRINT_PTR_H
+    tya
+    pha
+    ldy #$00
+print_next:
+    lda (PRINT_PTR),y
+    beq print_done
+    jsr CHROUT
+    iny
+    jmp print_next
+print_done:
+    tya
+    clc
+    adc PRINT_PTR
+    sta PRINT_PTR
+    lda PRINT_PTR_H
+    adc #$00
+    sta PRINT_PTR_H
+    pla
+    tay
+    lda PRINT_PTR_H
+    pha
+    lda PRINT_PTR
+    pha
+    rts
+      </pre>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
