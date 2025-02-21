@@ -71,7 +71,8 @@
 
   <div class="container mt-5">
     <h1 class="text-center">Lucky Digits: An Infinite Guessing Game with Color</h1>
-    
+    <p class="text-muted">Published on: Februrary 17, 2025</p>
+
     <section class="mt-4">
       <h2>Introduction</h2>
       <p>Initially, I planned to build a Snake game, but after facing challenges with movement, I switched to a simpler guessing game called Lucky Digits. This project was exciting and challenging as I explored low-level programming, <a href="String.html" target="_blank" rel="noopener">ROM routines</a>, and memory manipulation.</p>
@@ -322,6 +323,14 @@ print_done:
       });
     });
   </script>
+  <script>
+    document.getElementById("post-date").textContent = new Date().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    });
+  </script>
+  
   
 </body>
 </html>

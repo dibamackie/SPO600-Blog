@@ -68,9 +68,9 @@
         { id: "NES", title: "NES: 6502 and NES insights.", link: "NES.html" },
         { id: "lab2", title: "Lab 2: MOB Programming", link: "lab2.html" },
         { id: "6502 vs. Modern Processors", title: "6502 vs. Modern Processors", link: "6502-vs-modern.html" },
-        { id: "Strings in 6502 Assembly", title: "Strings in 6502 Assembly", link: "String.html" },
-        { id: "Lab3", title: "Lab3: Lucky Digits", link: "lab3.html" },
-        { id: "lab4", title: "Lab 4: Coming Soon...", link: "#", disabled: true },
+        { id: "Strings in 6502 Assembly", title: "Strings in 6502 Assembly", link: "String.html", date: "February 17, 2025" },
+        { id: "Lab3", title: "Lab3: Lucky Digits", link: "lab3.html", date: "February 17, 2025" },
+        { id: "lab4", title: "Lab 4: Coming Soon...", link: "#", disabled: true, date: "February 20, 2025" },
         
       ];
 
@@ -83,6 +83,17 @@
           labItem.classList.add("list-group-item", "list-group-item-action");
           if (lab.disabled) labItem.classList.add("disabled");
           labList.appendChild(labItem);
+
+          const labTitle = document.createElement("div");
+      labTitle.textContent = lab.title;
+
+      const labDate = document.createElement("small");
+      labDate.textContent = `Published on: ${lab.date}`;
+      labDate.classList.add("text-muted", "d-block"); // Style for date
+
+    
+      labItem.appendChild(labDate);
+    
         });
       }
 
