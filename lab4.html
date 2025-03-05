@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 4 - Diving Deep into GCC Builds on SPO600 Servers</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .container {
+      max-width: 900px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Lab 4 - Diving Deep into GCC Builds on SPO600 Servers</h1>
+    <p class="text-muted text-center">Published on: <strong>March 5, 2025</strong></p>
+    
+    <section class="mt-4">
+      <h2>Introduction</h2>
+      <p>hey tech enthusiasts! In this lab we tried something new. In lab 4 was challenge to build the latest development version of the GNU Compiler Collection (GCC) from the source on two SPO600 servers: X86-001(running an x86_64 architecture) and aarch64-002 (running AArch64). GCC is an open source development, compiling everything from the Linux server. in the following I had to clone GCC’s source, configure and build it to prove it works and make experiments with rebuilding it also make sure to track the time. it’s a part of nderstanding how compilers trully work and how build systems optimize across architectures. This blog covers my journey the essential result, and what I’ve learned by experimenting with this codebase on both servers.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>Building GCC from Scratch</h2>
+      <p>firstly, at this lab I counter many linking-errors, failed install and a broken test file. So I deleted everything including the old directories on both server, and I stared fresh by executing the following:</p>
+      <pre>
+rm -rf ~/gcc-build-001 ~/gcc-test-001 ~/git
+      </pre>
+      <p>• gcc-build-001: My build directory.</p>
+      <p>• gcc-test-001: Where GCC would install.</p>
+      <p>• git: kept the cloned GCC repository (~/git/gcc).</p>
+      <p>after, I double check with ls command to make sure that all the file except password.txt file were deleted, to start fresh because of the earlier failure I faced.</p>
+
+      <h3>Step 1: Grabbing the Source</h3>
+      <p>I cloned the repository from the official git:</p>
+      <pre>
+git clone git://gcc.gnu.org/git/gcc.git ~/git/gcc
+      </pre>
+      <p>Example of X86-001:</p>
+      <img src="photos/4.1.jpg"Screenshot of GCC build log" class="img-fluid rounded mt-3" style="max-width: 600px;">
+      <p>I pulled the last development branch into the current directory.</p>
+
+      <h3>Step 2: Configuring the Build</h3>
+      <p>since the GCC developer recommended to build it outside of the source tree, I created a separate directory for that :</p>
+      <pre>
+mkdir ~/gcc-build-001
+cd ~/gcc-build-001
+~/git/gcc/configure --prefix=$HOME/gcc-test-001
+      </pre>
+      <p>• --prefix=$HOME/gcc-test-001: Tells GCC to install into my home directory, avoiding root privileges (a big no-no for test builds per the lab guide).</p>
+      <p>I found the following command for getting the Sudo Access sudo dnf install ncurses-devel and with the little help of searching through the internet, I came to the following command for execute the desired instruction and get access to some packages as the root user.</p>
+      <img src="photos/4.2.jpg" alt="Screenshot of GCC build log" class="img-fluid rounded mt-3" style="max-width: 600px;">
+      <pre>
+sudo dnf install -y gcc g++ make libmpc-devel mpfr-devel gmp-devel
+      </pre>
+      <p>• sudo: Runs the command as a superuser (admin privileges).</p>
+      <p>• dnf install: Uses the DNF package manager (default in Fedora-based systems) to install packages.</p>
+      <p>• -y: Automatically confirms installation without asking for user input.</p>
+      <p>Packages being installed:</p>
+      <p>• gcc: The GNU Compiler Collection, required for compiling code.</p>
+      <p>• g++: The GNU C++ compiler.</p>
+      <p>• make: A build automation tool used for compiling software.</p>
+      <p>• libmpc-devel: Development files for the MPC (Multiple Precision Complex) library.</p>
+      <p>• mpfr-devel: Development files for the MPFR (Multiple Precision Floating-Point) library.</p>
+      <p>• gmp-devel: Development files for the GMP (GNU Multiple Precision Arithmetic) library.</p>
+      <p>Now why are these matters? I figured that GMP, MPFR and MPC are mandatory dependencies for building GCC. By running this command we can be sure that all the required dependencies were installed before building the GCC. since I forgot t take a screenshot before actually installing it we witness the “Nothing to do” message sice all the packages were already installed and no changes were made for avoiding redundant installations.</p>
+
+      <h3>Step 3: The Big Build</h3>
+      <p>Now everything is ready for the big build by executing the following command:</p>
+      <pre>
+time make -j 17 |& tee build.log
+      </pre>
+      <p>• time: Measured the build duration.</p>
+      <p>• |& tee build.log: Saved output to a log while showing it live which was pretty scary at the beginning before I knew it might takes 20 minues up to hours depending on the build options, speed of the build computer.</p>
+      <p>this step took some time since the GCC’s base code is huge. Counting hunders or maybe thousands of file in C, C++ and other languages. To keep the process running I played my series while I was waiting for the server to make the big build.</p>
+      <img src="photos/4.3.jpg" alt="Screenshot of GCC build log" class="img-fluid rounded mt-3" style="max-width: 600px;">
+      <img src="photos/4.4.jpg" alt="Screenshot of GCC build log" class="img-fluid rounded mt-3" style="max-width: 600px;">
+      <h3>Step 4: Installing GCC</h3>
+      <p>Once the build finished, I installed it by executing the following command :</p>
+      <pre>
+make install
+      </pre>
+      <p>I did not have the root access, so I installed GCC into ~gcc-test-001 to avoid the previous errors I got so I made sure to complete a full build first.</p>
+
+      <h3>Step 5: Proving It Works</h3>
+      <p>I ran the following to prove that it works:</p>
+      <pre>
+gcc --version 
+~/gcc-test-001/bin/gcc --version
+      </pre>
+      <p>• x86-001: System: 15.0.1; Mine: [e.g., 14.2.1 20240912(experimental)].</p>
+      <p>• aarch64-002: System: 15.0.1; Mine: [e.g., 14.2.1 20240912 (experimental)].</p>
+      <p>1. Development Version:</p>
+      <pre>
+cd ~/git/gcc
+git log -1
+      </pre>
+      <p>• Showed a commit like Date: Tue Mar 4 2025, proving it’s fresh from the dev branch.</p>
+      <p>2. Compiles a C Program:</p>
+      <pre>
+echo -e '#include <stdio.h>\nint main() {\n    printf("Hello, GCC!\\n");\n    return 0;\n}' > test.c
+cat test.c
+~/gcc-test-001/bin/gcc test.c -o test
+./test
+      </pre>
+      <img src="photos/4.5.jpg"Screenshot of GCC build log" class="img-fluid rounded mt-3" style="max-width: 600px;">
+      <p>Output: Hello, GCC! on both servers.</p>
+
+      <h3>Step 6: Rebuild Experiments</h3>
+      <p>I modified passes.cc:</p>
+      <pre>
+touch ~/git/gcc/gcc/passes.cc
+      </pre>
+      <p>and then rebuild:</p>
+      <pre>
+cd ~/gcc-build-001
+time make -j 17 |& tee rebuild.log
+      </pre>
+      <p>Finally, a null rebuild (no changes):</p>
+      <pre>
+time make -j 17 |& tee null_rebuild.log
+      </pre>
+    </section>
+
+    <section class="mt-4">
+      <h2>Results: Data and Comparisons</h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>x86-001 (x86_64)</th>
+            <th>aarch64-002 (AArch64)</th>
+            <th>Change Factor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Initial Build</td>
+            <td>47m37.233s</td>
+            <td>25m2.050s</td>
+            <td>-47.43%</td>
+          </tr>
+          <tr>
+            <td>Rebuild (passes.cc)</td>
+            <td>1m17.022s</td>
+            <td>0m40.443s</td>
+            <td>-47.49%</td>
+          </tr>
+          <tr>
+            <td>Null Rebuild</td>
+            <td>0m45.123s</td>
+            <td>0m14.767s</td>
+            <td>-67.28%</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Change Factor (%) = ((AArch64 time - x86_64 time) / x86_64 time) * 100</p>
+      <p>Step 1: Convert Times to Seconds</p>
+      <p>• Initial Build:</p>
+      <p>&nbsp;&nbsp;o x86_001: 47m37.233s = (47 * 60) + 37.233 = 2820 + 37.233 = 2857.233 seconds</p>
+      <p>&nbsp;&nbsp;o aarch64_002: 25m2.050s = (25 * 60) + 2.050 = 1500 + 2.050 = 1502.050 seconds</p>
+      <p>• Rebuild (passes.cc):</p>
+      <p>&nbsp;&nbsp;o x86_001: 1m17.022s = (1 * 60) + 17.022 = 60 + 17.022 = 77.022 seconds</p>
+      <p>&nbsp;&nbsp;o aarch64_002: 0m40.443s = (0 * 60) + 40.443 = 40.443 seconds</p>
+      <p>• Null Rebuild:</p>
+      <p>&nbsp;&nbsp;o x86_001: 0m45.123s = (0 * 60) + 45.123 = 45.123 seconds</p>
+      <p>&nbsp;&nbsp;o aarch64_002: 0m14.767s = (0 * 60) + 14.767 = 14.767 seconds</p>
+      <p>Step 2: Calculate Change Factors</p>
+      <p>Initial Build</p>
+      <p>• Difference: 1502.050 - 2857.233 = -1355.183 seconds (AArch64 is faster)</p>
+      <p>• Change Factor: (-1355.183 / 2857.233) * 100 = -47.43%</p>
+      <p>• Result: AArch64 was 47.43% faster.</p>
+      <p>Rebuild (passes.cc)</p>
+      <p>• Difference: 40.443 - 77.022 = -36.579 seconds (AArch64 is faster)</p>
+      <p>• Change Factor: (-36.579 / 77.022) * 100 = -47.49%</p>
+      <p>• Result: AArch64 was 47.49% faster.</p>
+      <p>Null Rebuild</p>
+      <p>• Difference: 14.767 - 45.123 = -30.356 seconds (AArch64 is faster)</p>
+      <p>• Change Factor: (-30.356 / 45.123) * 100 = -67.28%</p>
+      <p>• Result: AArch64 was 67.28% faster.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>Experiences and Reflections</h2>
+      <p>Lab 4 was very different than the other labs and it was an intense dive into GCC builds, I learned a lot from the experience and handling such a massive codebase which developed over the decades and moving into multiple languages and supports countless architectures. I found it pretty challenging and exiting. since I faced errors at the beginning I make me to star fresh as I mention in the introduction as well. starting fresh made all the difference which made to delete and reinstalling dependencies like gmp-devel and mpfr-devel got things back on track. In the end, seeing Hello, GCC! appear on both servers felt like a well-earned victory.</p>
+      <p>Challenges Faced</p>
+      <p>the process was not smooth at the beginning but I hit a few roadblocks.</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- Missing libraries stalled configure until I installed the necessary dependencies.</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- A botched test.c—forgetting -e with echo—left GCC confused.</p>
+      <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- The first build were a real patient test but it was nice that I figured that the best solution for keeping my screen on is to watch my favourite series while waiting. So I call It a win-win.</p>
+      <p>Insights</p>
+      <p>Aarch64 win the building process from x86-64 by completing the task significantly faster:</p>
+      <p>• 47.43% faster on the initial build.</p>
+      <p>• 47.49% faster on the passes.cc rebuild (1m17s vs. 0m40s).</p>
+      <p>• 67.28% faster on the null rebuild (0m45s vs. 0m15s).</p>
+      <p>Based on my research before starting this lab I was expecting x86-64 take less time for building but that’s why experimenting is asset.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>Final Thoughts</h2>
+      <p>Debugginf logs and getting hands on with the Git, Make significantly leveled up my skills and knowledge. Aarch64 performance was shocking. could it be clock speed, I/O efficiency, or something else? Next time, I’d profile it with perf to dig deeper? Above all, GCC’s complexity amazed me. It was both challenging and inspiring.</p>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
