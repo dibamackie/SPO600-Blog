@@ -82,12 +82,12 @@
       lets start!
     </p>
 
-    <h2>Setting Up GCC</h2>
+    <h2>Step 1: Setting Up GCC</h2>
     <p>
       First we’re going to review a little what we did on Lab 4. I needed to build a custom version of GCC to ensure that my changes wouldn’t interfere with the system-installed GCC
     </p>
 
-    <h3>Step 1.</h3>
+    <h3></h3>
     <pre>
 rm -rf ~/gcc-build-001 ~/gcc-test-001 ~/git
 git clone git://gcc.gnu.org/git/gcc.git ~/git/gcc
@@ -122,7 +122,7 @@ which gcc
       now lets move on to step 2.
     </p>
 
-    <h2>Creating the GCC Pass</h2>
+    <h2>Step 2: Creating the GCC Pass</h2>
     <p>
       I navigated to the GCC source directory and created a new pass file and I called it pass_project.cc
     </p>
@@ -169,7 +169,7 @@ time make -j$(nproc) |& tee build.log
 make install
     </pre>
 
-    <h2>now its time for Testing the Custom GCC Pass</h2>
+    <p>now its time for Testing the Custom GCC Pass</p>
 
     <h3>Step 5: Creating a Test Program</h3>
     <p>
