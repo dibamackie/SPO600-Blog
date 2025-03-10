@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How GCC Powers Real-World Development: Applications and Fields in 2025</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .container {
+      max-width: 900px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+    }
+    .gcc-img {
+      max-width: 100%;
+      height: auto;
+      margin: 15px 0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">How GCC Powers Real-World Development: Applications and Fields in 2025</h1>
+    <p class="text-muted text-center">Published on: <strong>March 9, 2025</strong></p>
+
+    <h2>Introduction</h2>
+    <p>
+      The GNU Compiler Collection (GCC) is a cornerstone of open-source software, enabling developers to compile code across a vast array of platforms. My recent journey creating a custom GCC pass for my SPO600 2025 Winter Project sparked my curiosity about its real-world impact. In this blog, I’ll explore how GCC drives compilation in practice and the diverse fields leveraging it in 2025.
+    </p>
+
+    <h2>GCC in the Real World: How Compilation Happens</h2>
+    <p>
+      GCC transforms source code into executable programs through stages: preprocessing, compilation to assembly, assembly to object code, and linking. My custom pass, which counted basic blocks and GIMPLE statements, fits into the compilation phase, optimizing the intermediate representation. This process is powered by a global community contributing to GCC’s Git repository, ensuring continuous improvement.
+    </p>
+
+    <h2>Fields Leveraging GCC Today</h2>
+    <ul>
+      <li>
+        <strong>Embedded Systems and IoT</strong>: GCC plays a pivotal role in optimizing code for embedded systems, particularly in the Internet of Things (IoT). IoT devices—like smart thermostats, fitness trackers, and home automation systems—require efficient, lightweight code to run on resource-constrained hardware such as microcontrollers (e.g., ESP32, Arduino). GCC’s ability to generate highly optimized machine code ensures these devices operate reliably while minimizing power consumption. For instance, a smart light bulb uses GCC-compiled firmware to process sensor data and communicate via Wi-Fi, all within tight memory constraints. I’m personally a huge fan of IoT—I’ve been using smart devices all around my living space to make life more convenient. Recently, I bought a motor to automate my curtains because I’m living in a school residence where I’m not allowed to change the curtains. I’m working on a DIY project to make them open and close automatically using an IoT setup, and GCC is helping me compile the firmware for my microcontroller to control the motor efficiently.
+      </li>
+      <li><strong>High-Performance Computing (HPC)</strong>: Supercomputers and scientific simulations, like weather forecasting, rely on GCC for performance tuning.</li>
+      <li><strong>Software Development</strong>: Enterprises and open-source projects use GCC to compile C, C++, and Fortran applications.</li>
+      <li><strong>Gaming and Graphics</strong>: GCC supports optimized engines and shaders for high-performance gaming.</li>
+      <li><strong>Security and Cryptography</strong>: Secure software development benefits from GCC’s optimization and debugging capabilities.</li>
+    </ul>
+
+    <h2>Current Trends and Innovations in 2025</h2>
+    <p>
+      In 2025, GCC is evolving with better RISC-V support, AI-assisted optimization techniques, and enhanced multi-threading. It’s also playing a role in emerging fields like quantum computing compilers, reflecting the community’s forward-thinking contributions.
+    </p>
+   
+
+    <h2>Conclusion</h2>
+    <p>
+      GCC’s versatility and community-driven development make it a superhero in 2025—saving the day for IoT gadgets, supercomputers, and my DIY curtain motor (which, let’s be honest, might need a GCC optimization pass to stop jamming mid-swing!). My custom pass adventure deepened my love for this compiler wizardry, and now I’m dreaming of smart homes where GCC-compiled code rules the roost. So, grab a cup of coffee, dive into GCC’s source code, or toss your own IoT project into the mix—drop your wildest GCC or curtain-automation tales in the comments, and let’s geek out together!
+    </p>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
