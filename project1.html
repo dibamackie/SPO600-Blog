@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Building a Basic GCC Pass: My Journey in Compiler Development</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important;
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .container {
+      max-width: 900px;
+    }
+    pre {
+      background-color: #f8f9fa;
+      padding: 10px;
+      border-radius: 5px;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1 class="text-center">Building a Basic GCC Pass: My Journey in Compiler Development</h1>
+    <p class="text-muted text-center">Published on: <strong>March 9, 2025</strong></p>
+
+    <p>
+      Here we go again with another blog. This is actually a very important one because it took 24 hours of my lifetime, basically a full day. are you ready to start?
+    </p>
+    <p>
+      based on lab 4 which I built a GCC this is basically a follow up to that. In this lab we want to build a Basic GCC pass. BASIC? Yes, as what you heard! seems like this is only a basic one. Thanks god it wasn’t a complicated one otherwise I would have lost it :D 
+    </p>
+    <p>
+      in the open-source world, compiler development plays an important role in optimizing and transformation the code efficiency, that is why we learning it on this course which has the exact name if you wonder.
+    </p>
+    <p>
+      This blog documents my journey from setting up GCC to successfully implement my pass. 
+    </p>
+    <p>
+      first lets understand the concept of GCC passes.
+    </p>
+
+    <h2>concept</h2>
+    <p>
+      A GCC pass is a stage in the compilation process, where code transformations or optimizations occur. Passes can analyze, modify, or optimize intermediate representations (IRs) like GIMPLE and RTL before generating final machine code.
+    </p>
+    <p>
+      my goal here was to add a new pass that inspects functions within compiled programs, counting their basic blocks and GIMPLE statements.
+    </p>
+    <p>
+      To be honest there is not a very specific instructions out there or maybe I was not smart enough to find it this easily that’s why I needed to go through many many different sources, to first get familiar with the concept and be able to actually complete this Project. 
+    </p>
+    <p>
+      lets start!
+    </p>
+
+    <h2>Setting Up GCC</h2>
+    <p>
+      First we’re going to review a little what we did on Lab 4. I needed to build a custom version of GCC to ensure that my changes wouldn’t interfere with the system-installed GCC
+    </p>
+
+    <h3>Step 1.</h3>
+    <pre>
+rm -rf ~/gcc-build-001 ~/gcc-test-001 ~/git
+git clone git://gcc.gnu.org/git/gcc.git ~/git/gcc
+mkdir ~/gcc-build-001
+cd ~/gcc-build-001
+~/git/gcc/configure --prefix=$HOME/gcc-test-001
+    </pre>
+    <p>
+      Then, I installed the necessary dependencies and compiled GCC:
+    </p>
+    <pre>
+sudo dnf install -y gcc g++ make libmpc-devel mpfr-devel gmp-devel
+
+time make -j$(nproc) |& tee build.log
+
+make install
+    </pre>
+    <p>
+      To verify that I was using my custom GCC build:
+    </p>
+    <pre>
+export PATH=$HOME/gcc-test-001/bin:$PATH
+which gcc
+    </pre>
+    <p>
+      I got this out put:
+    </p>
+    <pre>
+/home/sdmakki/gcc-test-001/bin/gcc
+    </pre>
+    <p>
+      now lets move on to step 2.
+    </p>
+
+    <h2>Creating the GCC Pass</h2>
+    <p>
+      I navigated to the GCC source directory and created a new pass file and I called it pass_project.cc
+    </p>
+    <pre>
+cd ~/git/gcc/gcc
+nano pass_project.cc
+<img src="photos/B2.jpg" alt="1" class="1">
+    </pre>
+
+    <h2>Step 3: Registering the Pass</h2>
+    <p>
+      To integrate the pass into GCC, I modified the following files in ~/git/gcc/gcc/ by adding the following lines into 
+    </p>
+    <p>
+      1.tree-pass.h.
+    </p>
+    <img src="photos/B3.jpg" alt="p2" class="p2">
+    <p>
+      2. Makefile.in 
+      at where  OBJS = \ stored
+    </p>
+    <img src="photos/B4.jpg" alt="p3" class="p3">
+    <p>
+      3. passes.def
+    </p>
+    <img src="photos/B5.jpg" alt="p4" class="p4">
+    <h2>Step 4: Rebuilding GCC</h2>
+    <p>
+      I try to build but I got an error so here I started over again and I deleted my gcc-build-001 and build again:
+    </p>
+    <pre>
+rm -rf ~/gcc-build-001
+mkdir ~/gcc-build-001
+cd ~/gcc-build-001
+~/git/gcc/configure --prefix=$HOME/gcc-test-001
+
+time make -j$(nproc) |& tee build.log
+    </pre>
+    <img src="photos/B1.jpg" alt="p5" class="p5">
+    <p>
+      after building I used the following command for installing:
+    </p>
+    <pre>
+make install
+    </pre>
+
+    <h2>now its time for Testing the Custom GCC Pass</h2>
+
+    <h3>Step 5: Creating a Test Program</h3>
+    <p>
+      I made a very simple test file and I called it hello.c
+    </p>
+    <img src="photos/B7.jpg" alt="p6" class="p6">
+    <h3>Step 6: Compiling with the Custom Pass and Checking the Dump File</h3>
+    <pre>
+gcc -Wall -g -fdump-tree-pass_project hello.c -o hello
+    </pre>
+    <p>
+      What This Does:
+    </p>
+    <ul>
+      <li>-Wall → Enables all warnings.</li>
+      <li>-g → Adds debugging symbols.</li>
+      <li>-fdump-tree-pass_project → Runs your custom GCC pass and saves its output to a dump file.</li>
+      <li>-o hello → Creates an executable named hello.</li>
+    </ul>
+    <pre>
+ls | grep hello.c.019t.pass_project
+    </pre>
+    <p>
+      this command check if the dump file was created
+    </p>
+    <pre>
+cat hello.c.019t.pass_project
+    </pre>
+    <p>
+      this command shows the inside of the file
+    </p>
+    <img src="photos/I did it!.jpg" alt="final" class="final">
+    <h2>Final Thoughts and conclusions</h2>
+    <p>
+      We have an expression which says, “Everything is easy once you know how.”. This seems so easy and because I made some changes I did it couple of times and I have no idea why it took me a full day in total to be able to make a pass. The silver lining is that I can make passes in my sleep now and I can call myself an expert. 
+    </p>
+    <p>
+      Anyway, That was a journey. If I had a dollar for every time I had to rebuild GCC, I could probably afford a whole lunch. Compilers don’t mess around, and debugging GCC is like trying to solve a mystery novel where the author hates you.
+    </p>
+    <p>
+      But all jokes aside, this project taught me a lot. I now understand how compiler passes work, how to modify GCC, and most importantly, how to stay sane while waiting for long builds to complete. If anyone ever tells you adding a simple pass to GCC is “easy,” run—run far, far away.
+    </p>
+    <p>
+      In the end, it was worth it. Seeing my pass work correctly felt like a victory dance moment, except I was too tired from debugging to actually dance. Would I do it again? Absolutely. Would I cry a little first? Also, yes but not a little.
+    </p>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
