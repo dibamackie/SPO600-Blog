@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Speeding Up Games</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .navbar { background-color: #28a745 !important; }
+    .navbar-brand, .nav-link { color: white !important; }
+    .nav-link.active { font-weight: bold; text-decoration: underline; }
+    pre { font-family: "Courier New", Courier, monospace; }
+    .image-container img { max-width: 100%; height: auto; margin-top: 20px; }
+  </style>
+</head>
+<body data-lab="games">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h1>Speeding Up Open-Source Games with SIMD and Profiling</h1>
+    <h2>Introduction</h2>
+    <p>In open source, blogs are a great way to swap ideas about tech and projects—like how <a href="https://godotengine.org/">Godot</a> devs chat with <a href="https://www.blender.org/">Blender</a> folks. For my SPO600 course at Seneca, I’m exploring how to make software faster. This time, I’m looking at how SIMD and profiling can boost open-source games. Speed matters when you’re dodging bullets in <a href="https://play0ad.com/">0 A.D.</a> or racing in <a href="https://supertuxkart.net/">SuperTuxKart</a>!</p>
+
+    <h2>SIMD in Games</h2>
+    <p>SIMD—Single Instruction, Multiple Data—is a CPU trick that does one job on lots of data at once. Think of updating 3D positions for a bunch of enemies in one go. Open-source games like <a href="https://openmw.org/">OpenMW</a> (a remake of Morrowind) use SIMD through <a href="https://developer.arm.com/Architectures/Neon">NEON</a> or <a href="https://en.wikipedia.org/wiki/Streaming_SIMD_Extensions">SSE</a> to crunch graphics math fast. It’s simple and works everywhere, but you’re locked into a fixed size—tough if your game runs on different hardware.</p>
+
+    <h2>Profiling to Find the Slow Spots</h2>
+    <p>Profiling checks where your game lags. Tools like <a href="https://sourceware.org/binutils/docs/gprof/">gprof</a> or <a href="https://perf.wiki.kernel.org/index.php/Main_Page">perf</a> watch your code run and point out the hogs—like a physics loop eating time. I tried profiling a chunk of <a href="https://github.com/supertuxkart/stk-code">SuperTuxKart</a> once, and it showed rendering was the bottleneck. Fixing that could mean smoother kart races!</p>
+
+    <h2>Bringing It Together</h2>
+    <p>Here’s the combo: use profiling to spot slow parts, then add SIMD to speed them up. Say your game’s AI is sluggish—profile it, find the math-heavy bits, and rewrite them with SIMD. In SPO600, we’re learning this hands-on. Newer stuff like <a href="https://developer.arm.com/Architectures/Scalable-Vector-Extension">SVE</a> could even future-proof it for ARM chips, like on a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>.</p>
+
+    <h2>Why It’s Cool for Open Source</h2>
+    <p>Games need to run fast, or players quit. Open-source titles compete with big studios, so tools like these level the field. Plus, anyone can jump in and tweak the code—imagine boosting <a href="https://xonotic.org/">Xonotic</a> with profiling data you share. Tried this in a game? Drop a comment—I’d love to hear!</p>
+  </div>
+
+  <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitCount = localStorage.getItem(labName) || 0;
+        localStorage.setItem(labName, Number(visitCount) + 1);
+        const visitMessage = document.querySelector("#visit-count");
+        if (visitMessage) {
+          visitMessage.textContent = `You've visited this page ${Number(visitCount) + 1} times.`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
