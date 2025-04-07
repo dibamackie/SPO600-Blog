@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GCC Plugin Project</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .navbar { background-color: #28a745 !important; }
+    .navbar-brand, .nav-link { color: white !important; }
+    .nav-link.active { font-weight: bold; text-decoration: underline; }
+    pre { font-family: "Courier New", Courier, monospace; }
+    .image-container img { max-width: 100%; height: auto; margin-top: 20px; }
+  </style>
+</head>
+<body data-lab="gcc-plugin">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h1>Stage 2 - GCC Plugin Project</h1>
+    <h2>Introduction</h2>
+    <p>In the open-source world, blogs are a lifeline for sharing tech ideas—like how devs on <a href="https://gcc.gnu.org/">GCC</a> or <a href="https://llvm.org/">LLVM</a> keep up with each other. I’m diving into compiler optimization, and this week’s about my Stage 2 GCC Plugin Project. I built a plugin to spot duplicate functions in code, which ties into real-world stuff like slimming down <a href="https://www.kernel.org/">Linux kernel</a> builds. Let’s break it down!</p>
+
+    <h2>What I Did</h2>
+    <p>My goal was to make a GCC plugin that checks for function clones—basically, functions that do the same thing under different names. I used <a href="https://gcc.gnu.org/onlinedocs/gccint/GIMPLE.html">GIMPLE</a>, GCC’s middle-layer representation, to compare them by counting basic blocks (code chunks), statements, and their GIMPLE codes. If they match, I print <code>PRUNE</code> (cut it out!); if not, <code>NOPRUNE</code> (keep it). It’s like a code declutter tool.</p>
+
+    <h2>Setting It Up</h2>
+    <p>I started with a custom GCC build I called <code>gcc-test-001</code>. To make the plugin work, I needed GCC’s internal headers from the plugin <code>include</code> folder. I compiled it with <a href="https://gcc.gnu.org/onlinedocs/gcc/Invoking-G++.html">g++</a> using <code>-fPIC</code> and <code>-shared</code> flags for a shared library. I hit some error snags, so I set <code>PREFERRED_DEBUGGING_TYPE=DWARF2</code> and <code>flag_checking=0</code> to keep it smooth. Here’s the command I used:</p>
+    <pre>
+g++ -fPIC -shared -o project.so /home/sdmakki/git/gcc/gcc/pass_project.cc \
+  -I/home/sdmakki/git/gcc/gcc \
+  -I/home/sdmakki/git/gcc/include \
+  -I/home/sdmakki/gcc-test-001/lib/gcc/x86_64-pc-linux-gnu/15.0.1/plugin/include \
+  -I/home/sdmakki/gcc-test-001/include \
+  -fno-rtti \
+  -DPREFERRED_DEBUGGING_TYPE=DWARF2 -Dflag_checking=0
+    </pre>
+    <p>It’s a mouthful, but it links all the right pieces together!</p>
+
+    <h2>Writing the Plugin</h2>
+    <p>The plugin’s a GIMPLE pass called <code>project</code>, hooked into GCC’s pipeline with <code>gimple_opt_pass</code>. It scans each function, grabs its structure (blocks and statements), and compares it to a “base” function (tagged with <code>.resolver</code>). I added debug logs to <code>/tmp/plugin_debug.log</code> to track what’s happening—super helpful when nothing showed up at first. Check the full code below!</p>
+
+    <h2>Testing It Out</h2>
+    <p>I tested it on <code>clone-test-core.c</code>, a file with clone functions like <code>sum_sample</code> and <code>scale_samples</code>. Here’s how I ran it:</p>
+    <pre>
+~/gcc-test-001/bin/gcc -O2 -fplugin=./project.so -fdump-tree-project -c clone-test-core.c
+    </pre>
+    <p>This spit out dump files like <code>clone-test-core.c.019t.project</code> and <code>clone-test-core.c.369t.project</code>. At first, no <code>PRUNE</code> or <code>NOPRUNE</code> showed up—ugh! But after fixing the <code>dump_file</code> checks and base matching, it worked. Seeing those messages was a rush.</p>
+
+    <h2>What I Learned</h2>
+    <p>- Built and ran a custom GCC plugin—huge for understanding compilers.<br>
+       - Nailed a GIMPLE pass to analyze code structure.<br>
+       - Figured out clone detection with basic blocks and statements.<br>
+       - Debugged with logs—patience is key!<br>
+       - Tested it on real code and got tree dumps working.</p>
+
+    <h2>The Code</h2>
+    <p>Here’s the plugin (<code>pass_project.cc</code>):</p>
+    <pre>
+extern "C" int plugin_is_GPL_compatible = 1;
+
+#include "config.h"
+#include "system.h"
+#include "coretypes.h"
+#include "backend.h"
+#include "tree.h"
+#include "gimple.h"
+#include "tree-pass.h"
+#include "ssa.h"
+#include "tree-pretty-print.h"
+#include "gimple-iterator.h"
+#include "gimple-walk.h"
+#include "internal-fn.h"
+#include "gimple-pretty-print.h"
+#include "cgraph.h"
+#include "gimple-ssa.h"
+#include "attribs.h"
+#include "pretty-print.h"
+#include "tree-inline.h"
+#include "intl.h"
+#include "function.h"
+#include "basic-block.h"
+#include "plugin.h"
+#include "plugin-version.h"
+
+#include <string>
+#include <vector>
+#include <stdio.h>
+
+namespace {
+const pass_data pass_data_project = {
+  GIMPLE_PASS, "project", OPTGROUP_NONE, TV_NONE, PROP_cfg, 0, 0, 0, 0
+};
+
+class pass_project : public gimple_opt_pass {
+public:
+  pass_project(gcc::context *ctxt) : gimple_opt_pass(pass_data_project, ctxt) {}
+  bool gate(function *) override { return true; }
+  unsigned int execute(function *) override;
+};
+
+unsigned int pass_project::execute(function *fun) {
+    if (!fun || !fun->cfg) return 0;
+
+    FILE *debug_file = fopen("/tmp/plugin_debug.log", "a");
+    if (debug_file) {
+        fprintf(debug_file, ">>> GCC PASS PROJECT ACTIVE <<<\n");
+        fclose(debug_file);
+    }
+
+    if (!dump_file) return 0;
+
+    fprintf(dump_file, ">>> GCC PASS PROJECT ACTIVE <<<\n");
+
+    static std::string base_function;
+    static int base_bb_count = 0;
+    static int base_stmt_count = 0;
+    static std::vector<int> base_codes;
+
+    cgraph_node *node = cgraph_node::get(fun->decl);
+    if (!node) return 0;
+
+    const char *fname = node->name();
+    if (!fname) return 0;
+
+    std::string name(fname);
+
+    if (base_function.empty() && name.find(".resolver") != std::string::npos) {
+        base_function = name.substr(0, name.find(".resolver"));
+        fprintf(dump_file, "Found base function: %s\n", base_function.c_str());
+        return 0;
+    }
+
+    if (name.find(base_function) != 0 || name.find(".resolver") != std::string::npos) return 0;
+
+    int bb_count = 0;
+    int stmt_count = 0;
+    std::vector<int> current_codes;
+
+    basic_block bb;
+    FOR_EACH_BB_FN(bb, fun) {
+        bb_count++;
+        for (gimple_stmt_iterator gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
+            stmt_count++;
+            current_codes.push_back(static_cast<int>(gimple_code(gsi_stmt(gsi))));
+        }
+    }
+
+    if (base_bb_count == 0 && base_stmt_count == 0) {
+        base_bb_count = bb_count;
+        base_stmt_count = stmt_count;
+        base_codes = current_codes;
+        fprintf(dump_file, "Base function: %s\n", name.c_str());
+        fprintf(dump_file, "BBs: %d, Stmts: %d\n", base_bb_count, base_stmt_count);
+    } else {
+        if (bb_count != base_bb_count || stmt_count != base_stmt_count || current_codes != base_codes) {
+            fprintf(dump_file, "NOPRUNE: %s\n", name.c_str());
+        } else {
+            fprintf(dump_file, "PRUNE: %s\n", name.c_str());
+        }
+    }
+
+    return 0;
+}
+
+} // namespace
+
+gimple_opt_pass *make_pass_project(gcc::context *ctxt) {
+    return new pass_project(ctxt);
+}
+
+int plugin_init(struct plugin_name_args *plugin_info, struct plugin_gcc_version *version) {
+    const char *plugin_name = plugin_info->base_name;
+    struct register_pass_info pass_info;
+
+    printf(">>> Plugin initialized successfully <<<\n");
+
+    pass_info.pass = make_pass_project(nullptr);
+    pass_info.reference_pass_name = "cfg";
+    pass_info.ref_pass_instance_number = 1;
+    pass_info.pos_op = PASS_POS_INSERT_AFTER;
+
+    register_callback(plugin_name, PLUGIN_PASS_MANAGER_SETUP, nullptr, &pass_info);
+
+    return 0;
+}
+    </pre>
+
+    <h2>Wrapping Up</h2>
+    <p>Stage 2’s done! I’ve got a working GCC plugin that spots clones and helps trim code fat. Debugging was a slog, but it taught me tons about GCC’s <a href="https://gcc.gnu.org/onlinedocs/gccint/Plugins.html">plugin API</a> and GIMPLE. Next up: more optimization adventures in SPO600. Thoughts on this? Hit me up in the comments!</p>
+  </div>
+
+  <div id="visit-count" class="text-muted mt-3 text-center"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const labName = document.body.dataset.lab;
+      if (labName) {
+        const visitCount = localStorage.getItem(labName) || 0;
+        localStorage.setItem(labName, Number(visitCount) + 1);
+        const visitMessage = document.querySelector("#visit-count");
+        if (visitMessage) {
+          visitMessage.textContent = `You’ve visited this page ${Number(visitCount) + 1} times.`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
