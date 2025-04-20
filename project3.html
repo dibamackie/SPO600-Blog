@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPO600 Project Stage III</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .navbar {
+      background-color: #28a745 !important; /* Green navbar */
+    }
+    .navbar-brand, .nav-link {
+      color: white !important;
+    }
+    .nav-link.active {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    pre {
+      font-family: "Courier New", Courier, monospace;
+    }
+    .image-container img {
+      max-width: 100%; /* Make the image responsive */
+      height: auto;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body data-lab="stage3">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">Diba Makki</a>
+      <a class="navbar-brand" href="index.html">My Labs Blog</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-5">
+    <h1>SPO600 Project Stage III: Wrapping Up with Multi-Function Clone Analysis</h1>
+    <p class="text-muted">April 17, 2025</p>
+
+    <h2>Introduction</h2>
+    <p>Welcome to the final chapter of my SPO600 project journey! In Stage III, I extended my GCC pass to handle multiple cloned functions, crafted diverse test cases, and ensured compatibility across x86_64 and AArch64 architectures. This stage was about refining my Stage II work, enhancing functionality, and reflecting on the lessons learned. Despite challenges, I’m thrilled to share how I tackled this project and what I discovered along the way.</p>
+
+    <h2>Project Goals</h2>
+    <p>The objectives for Stage III were well-defined:</p>
+    <ul>
+      <li>Extend the GCC pass to process multiple sets of cloned functions and provide PRUNE/NOPRUNE recommendations for each.</li>
+      <li>Create test cases with at least two cloned functions, including scenarios with mixed PRUNE and NOPRUNE outcomes.</li>
+      <li>Verify functionality on x86_64 and AArch64 architectures.</li>
+      <li>Clean up issues from Stage II.</li>
+      <li>Document results, capabilities, limitations, and reflections in a detailed blog post.</li>
+    </ul>
+
+    <h2>Implementation Details</h2>
+    <p>Building on my Stage II pass, I restructured the code to handle multiple cloned functions efficiently. Inspired by my classmates’ approaches, I introduced a <code>FunctionFingerprint</code> struct to encapsulate each function’s characteristics, making comparisons more organized. The pass analyzes GIMPLE statements, basic blocks, and variable mappings to determine if a clone is identical to its base function (PRUNE) or different (NOPRUNE).</p>
+
+    <h3>Key Changes</h3>
+    <ul>
+      <li><strong>Multi-Function Support</strong>: The pass identifies all cloned functions by scanning for <code>.resolver</code> suffixes in the call graph and groups them by base name.</li>
+      <li><strong>Fingerprint Struct</strong>: Stores basic block count, statement count, GIMPLE codes, operand counts, operand types, and variable mappings.</li>
+      <li><strong>Comparison Logic</strong>: Compares fingerprints by checking structural and semantic properties. Any mismatch triggers a NOPRUNE recommendation.</li>
+      <li><strong>Cleanup</strong>: Fixed memory management issues from Stage II, ensuring proper deallocation.</li>
+    </ul>
+
+    <p>The complete pass code is included below and available in my <a href="https://github.com/dibamackie/spo600-project">GitHub repository</a>.</p>
+
+    <h2>Reflection</h2>
+    <p>Stage III was the most fulfilling part of the SPO600 journey for me. I started this course with minimal exposure to compiler internals and ended up writing a functioning GCC plugin capable of analyzing cloned functions across architectures. This project pushed me outside of my comfort zone — not just in C++ programming but also in debugging complex behaviors, navigating GCC’s internals, and experimenting with test cases.</p>
+    <p>At times, I felt overwhelmed, especially during long build cycles and segmentation faults. But overcoming these hurdles helped me build resilience and confidence in working with real-world open source projects. I now understand what GIMPLE really is, how tree representations work, and why function structure matters in optimization. I also learned how valuable a structured and clean implementation is — something I tried to reflect in my Stage III pass.</p>
+    <p>Beyond the technical gains, I’ve developed a deeper respect for compiler engineers and open-source maintainers who work on projects like GCC. This experience made me feel more connected to the real engineering process and how even small changes can have a big impact on performance and reliability.</p>
+
+    <h2>Conclusion</h2>
+    <p>Stage III wrapped up everything I learned throughout SPO600. I extended my GCC pass to support multiple function clones, cleaned up and refactored my logic, and verified my work on both x86_64 and AArch64 systems. I tested various clone scenarios, documented my findings, and reflected on the experience in this blog.</p>
+    <p>While my solution isn't perfect — I know there’s room for improvements in control flow analysis and handling edge cases — I’m proud of what I built. Most importantly, I’ve gained a toolkit that will help me approach low-level systems and compiler-related projects in the future.</p>
+    <p>Thanks to my classmates for the inspiration, and a huge thank-you to Professor Chris Tyler for his continuous support and encouragement. This journey challenged me, changed me, and reminded me why I chose this field in the first place.</p>
+
+
+    <pre><xaiArtifact artifact_id="fb595751-14f5-498e-9a2a-1ac31bb355a7" artifact_version_id="b98875e5-d356-4981-af48-29b4db2eb4a1" title="tree-prune-clones.cc" contentType="text/x-c++src">
+/* Test Pass
+   Diba Makki, Seneca Polytechnic College
+   Student ID: 144420189
+   Modelled on tree-nrv.cc and tree-ctyler.cc by Chris Tyler, Seneca Polytechnic College, 2024-11
+
+This file is part of GCC.
+
+
+#include &lt;map&gt;
+#include &lt;vector&gt;
+#include &lt;string&gt;
+#include "config.h"
+#include "system.h"
+#include "coretypes.h"
+#include "backend.h"
+#include "tree.h"
+#include "gimple.h"
+#include "tree-pass.h"
+#include "ssa.h"
+#include "gimple-iterator.h"
+#include "gimple-walk.h"
+#include "gimple-pretty-print.h"
+#include "cgraph.h"
+#include "gimple-ssa.h"
+#include "attribs.h"
+#include "tree-inline.h"
+#include "basic-block.h"
+
+namespace {
+
+const pass_data pass_data_prune_clones =
+{
+  GIMPLE_PASS, /* type */
+  "prune_clones", /* name */
+  OPTGROUP_NONE, /* optinfo_flags */
+  TV_NONE, /* tv_id */
+  PROP_cfg, /* properties_required */
+  0, /* properties_provided */
+  0, /* properties_destroyed */
+  0, /* todo_flags_start */
+  0, /* todo_flags_finish */
+};
+
+struct FunctionFingerprint {
+    int bb_count = 0;
+    int stmt_count = 0;
+    std::vector&lt;enum gimple_code&gt; gimple_codes;
+    std::vector&lt;unsigned&gt; operand_counts;
+    std::vector&lt;enum tree_code&gt; operand_types;
+    std::map&lt;int, int&gt; variable_map;
+};
+
+class pass_prune_clones : public gimple_opt_pass
+{
+public:
+  pass_prune_clones(gcc::context *ctxt)
+    : gimple_opt_pass(pass_data_prune_clones, ctxt)
+  {}
+
+  bool gate(function *) final override { return true; }
+
+  unsigned int execute(function *) final override;
+
+private:
+  static std::map&lt;std::string, FunctionFingerprint&gt; fingerprints;
+  int process_gimple_variables(std::map&lt;tree, int&gt;& ref_map, int index, gimple* stmt, std::map&lt;int, int&gt;& result_map);
+};
+
+std::map&lt;std::string, FunctionFingerprint&gt; pass_prune_clones::fingerprints;
+
+int pass_prune_clones::process_gimple_variables(std::map&lt;tree, int&gt;& ref_map, int index, gimple* stmt, std::map&lt;int, int&gt;& result_map) {
+    std::vector&lt;tree&gt; vars;
+
+    switch (gimple_code(stmt)) {
+        case GIMPLE_ASSIGN: {
+            tree lhs = gimple_assign_lhs(stmt);
+            vars.push_back(lhs);
+            int rhs_ops = gimple_num_ops(stmt) - 1;
+            for (int i = 1; i &lt;= rhs_ops; ++i) {
+                tree op = gimple_op(stmt, i);
+                vars.push_back(op);
+            }
+            break;
+        }
+        case GIMPLE_DEBUG_BIND: {
+            tree var = gimple_debug_bind_get_var(stmt);
+            tree val = gimple_debug_bind_get_value(stmt);
+            if (var) vars.push_back(var);
+            if (val) vars.push_back(val);
+            break;
+        }
+        case GIMPLE_COND: {
+            tree lhs = gimple_cond_lhs(stmt);
+            tree rhs = gimple_cond_rhs(stmt);
+            if (lhs) vars.push_back(lhs);
+            if (rhs) vars.push_back(rhs);
+            break;
+        }
+        default:
+            break;
+    }
+
+    for (tree var : vars) {
+        auto it = ref_map.find(var);
+        if (it != ref_map.end()) {
+            result_map[index] = it->second;
+        } else {
+            ref_map[var] = index;
+            result_map[index] = index;
+        }
+        ++index;
+    }
+    return index;
+}
+
+unsigned int pass_prune_clones::execute(function *func)
+{
+    static bool first_run = true;
+    struct cgraph_node *node = cgraph_node::get(func->decl);
+    if (!node || !dump_file || !func->cfg) return 0;
+
+    std::string fname(node->name());
+    if (fname.find(".resolver") != std::string::npos) return 0;
+
+    std::string base_name = fname.substr(0, fname.find("."));
+    if (first_run) {
+        struct cgraph_node *n;
+        FOR_EACH_DEFINED_FUNCTION(n) {
+            std::string nname(n->name());
+            if (nname.find(".resolver") != std::string::npos) {
+                std::string base = nname.substr(0, nname.find(".resolver"));
+                fingerprints[base] = FunctionFingerprint();
+                fprintf(dump_file, "Found resolver for function: %s\n", base.c_str());
+            }
+        }
+        first_run = false;
+    }
+
+    FunctionFingerprint current;
+    std::map&lt;tree, int&gt; ref_map;
+    int index = 0;
+
+    basic_block bb;
+    FOR_EACH_BB_FN(bb, func) {
+        current.bb_count++;
+        for (gimple_stmt_iterator gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
+            current.stmt_count++;
+        }
+    }
+
+    if (fingerprints.find(base_name) == fingerprints.end()) return 0;
+
+    auto& ref_fingerprint = fingerprints[base_name];
+    if (ref_fingerprint.bb_count == 0 && ref_fingerprint.stmt_count == 0) {
+        fprintf(dump_file, "Recording base function: %s\n", fname.c_str());
+        FOR_EACH_BB_FN(bb, func) {
+            for (gimple_stmt_iterator gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
+                gimple *stmt = gsi_stmt(gsi);
+                index = process_gimple_variables(ref_map, index, stmt, current.variable_map);
+                current.gimple_codes.push_back(gimple_code(stmt));
+                current.operand_counts.push_back(gimple_num_ops(stmt));
+                if (is_gimple_assign(stmt))
+                    current.operand_types.push_back(gimple_assign_rhs_code(stmt));
+            }
+        }
+        fingerprints[base_name] = current;
+    } else {
+        fprintf(dump_file, "Comparing function: %s\n", fname.c_str());
+        std::map&lt;int, int&gt; curr_var_map;
+        index = 0;
+
+        if (current.bb_count != ref_fingerprint.bb_count || current.stmt_count != ref_fingerprint.stmt_count) {
+            fprintf(dump_file, "NOPRUNE: %s\n", fname.c_str());
+            return 0;
+        }
+
+        auto code_it = ref_fingerprint.gimple_codes.begin();
+        auto count_it = ref_fingerprint.operand_counts.begin();
+        auto type_it = ref_fingerprint.operand_types.begin();
+
+        FOR_EACH_BB_FN(bb, func) {
+            for (gimple_stmt_iterator gsi = gsi_start_bb(bb); !gsi_end_p(gsi); gsi_next(&gsi)) {
+                gimple *stmt = gsi_stmt(gsi);
+                index = process_gimple_variables(ref_map, index, stmt, curr_var_map);
+                if (gimple_code(stmt) != *code_it || gimple_num_ops(stmt) != *count_it) {
+                    fprintf(dump_file, "NOPRUNE: %s\n", fname.c_str());
+                    return 0;
+                }
+                if (gimple_code(stmt) == GIMPLE_ASSIGN && *type_it != gimple_assign_rhs_code(stmt)) {
+                    fprintf(dump_file, "NOPRUNE: %s\n", fname.c_str());
+                    return 0;
+                }
+                ++code_it;
+                ++count_it;
+                if (gimple_code(stmt) == GIMPLE_ASSIGN) ++type_it;
+            }
+        }
+
+        if (curr_var_map == ref_fingerprint.variable_map) {
+            fprintf(dump_file, "PRUNE: %s\n", fname.c_str());
+        } else {
+            fprintf(dump_file, "NOPRUNE: %s\n", fname.c_str());
+        }
+    }
+    return 0;
+}
+
+} // anon namespace
+
+gimple_opt_pass *
+make_pass_prune_clones(gcc::context *ctxt)
+{
+  return new pass_prune_clones(ctxt);
+}
+
